@@ -67,20 +67,10 @@
         
         /* --- GRADIENT THEMES (REQUIRES WEBKIT/MOZ SUPPORT) --- */
 
-        .gradient-text-style {
-            /* Reset color to transparent so the gradient shows */
-            color: transparent !important;
-            background-clip: text !important;
-            -webkit-background-clip: text !important;
-            -webkit-text-fill-color: transparent !important;
-        }
-
         /* 5. NEON SPECTRA (Rainbow Gradient) */
         :root[data-theme="neon-spectra"] {
-            --accent-color: #FF66CC; /* Used for non-gradient elements */
+            --accent-color: #FF66CC; 
             --hand-accent: #00FFFF; 
-            
-            /* Background definition for the text */
             background-image: linear-gradient(90deg, #FF66CC, #00FFFF, #39FF14, #FFB800);
         }
 
@@ -91,8 +81,7 @@
             background-image: linear-gradient(45deg, #FF3333, #FF6600, #FFB800);
         }
 
-        
-        /* Base Styling */
+        /* Base Styling & Gradient Logic */
         body {
             background-color: var(--bg-color);
             color: var(--text-color);
@@ -106,16 +95,13 @@
             overflow-y: auto;
         }
         
-        /* Apply the gradient style to all theme-affected elements for gradient themes */
-        [data-theme="neon-spectra"] *,
-        [data-theme="lava-flow"] * {
+        [data-theme="neon-spectra"] *, [data-theme="lava-flow"] * {
             background-image: var(--background-image);
         }
         
-        [data-theme="neon-spectra"] .gradient-target,
-        [data-theme="lava-flow"] .gradient-target {
+        [data-theme="neon-spectra"] .gradient-target, [data-theme="lava-flow"] .gradient-target {
              background-image: var(--background-image);
-             color: transparent; /* Mandatory for clip */
+             color: transparent;
              background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -126,46 +112,13 @@
             color: var(--accent-color);
             text-shadow: 0 0 3px var(--accent-color);
         }
-
-        /* TOTAL PURGE OF DEFAULT FILE INPUT VISUALS */
-        .drop-area-file-input {
-            display: none !important;
-        }
-
-        /* Controls */
-        /* ... (styles for controls, grid, etc. retained) ... */
         
-        /* Collapsible Details Styling */
-        details {
-            border: none;
-            padding: 0;
-            margin: 0;
-        }
-        
-        details > summary {
-            list-style: none;
-            cursor: pointer;
-            border-bottom: 1px dashed var(--accent-color);
-            padding-bottom: 5px;
-            margin-bottom: 15px;
-            text-transform: uppercase;
-            font-size: 1.1em;
-            color: var(--text-color);
-            font-weight: 400;
-        }
+        .drop-area-file-input { display: none !important; }
 
-        details > summary::-webkit-details-marker {
-            display: none;
-        }
-        
-        details > summary::before {
-            content: "> ";
-            color: var(--accent-color);
-        }
-
-        details[open] > summary::before {
-            content: "v ";
-        }
+        details > summary { list-style: none; }
+        details > summary::-webkit-details-marker { display: none; }
+        details > summary::before { content: "> "; color: var(--accent-color); }
+        details[open] > summary::before { content: "v "; }
         
         .content-heading {
             font-size: 1.1em;
@@ -179,9 +132,7 @@
         }
 
         /* --- UNIFORM IMAGE SIZING (180x180) --- */
-        .drop-area-preview, 
-        .canvas, 
-        #result {
+        .drop-area-preview, .canvas, #result {
             width: var(--image-size);
             height: var(--image-size);
             max-width: 100%;
@@ -192,61 +143,76 @@
             display: block;
         }
 
-        /* Sliders and Hand Controls */
-        .control-range {
-            border: 1px solid var(--accent-color);
-            transition: box-shadow 0.15s ease-in-out, border-color 0.15s ease-in-out;
-        }
-        
-        /* Apply accent color for monochromatic themes, gradient for others */
-        .control-range::-webkit-slider-thumb {
-            background: var(--accent-color);
-        }
-
-        /* Hand Controls - Uses Hand Accent Color */
-        #handYOffset, #handScale { border-color: var(--hand-accent); }
-        #handYOffset:hover, #handScale:hover { box-shadow: 0 0 8px var(--hand-accent); }
-        #handYOffset::-webkit-slider-thumb, #handScale::-webkit-slider-thumb {
-            background: var(--hand-accent);
-            box-shadow: 0 0 3px var(--hand-accent);
-        }
-        
-        /* The main themes selector is now hidden behind details */
-        .theme-select {
-            grid-area: theme-select;
-            text-align: right;
-            font-size: 0.9em;
-        }
-        .theme-select details {
-             border: none;
-             text-align: left;
-             width: 100%;
-        }
-        .theme-select summary {
-            border-bottom: none !important;
-            text-align: right;
-            margin-bottom: 5px;
-            padding-bottom: 0;
-            font-size: 1em;
-            text-shadow: 0 0 5px var(--text-color);
-        }
-        .theme-select summary::before {
-             content: ':: THEME OVERRIDE ';
-             font-size: 0.9em;
-        }
-        .theme-select details[open] summary::before {
-            content: ':: THEME OVERRIDE ';
-        }
-        .theme-select select {
-            background-color: var(--input-bg);
-            border: 1px solid var(--accent-color);
+        /* --- BUTTON STYLES OVERHAUL --- */
+        .btn {
+            background-color: transparent;
             color: var(--text-color);
-            padding: 5px;
-            font-family: var(--font-mono);
-            width: 100%;
+            border: 1px solid var(--accent-color);
+            padding: 8px 15px;
+            text-transform: uppercase;
+            font-weight: 400;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-radius: var(--radius-sm);
+            text-align: center;
+            display: block;
         }
 
+        .btn:hover {
+            background-color: var(--accent-color);
+            color: var(--bg-color);
+            box-shadow: 0 0 5px var(--accent-color);
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background-color: var(--input-bg) !important;
+            color: var(--text-color) !important;
+            box-shadow: none !important;
+        }
 
+        /* Playback/Seek Buttons */
+        .btn-playback-playpause, .btn-playback-prev, .btn-playback-next {
+            color: var(--accent-color);
+            border-color: var(--accent-color);
+            padding: 10px;
+        }
+        .btn-playback-playpause:hover, .btn-playback-prev:hover, .btn-playback-next:hover {
+            background: var(--accent-color);
+            color: var(--bg-color);
+        }
+
+        /* Reset Button - Uses Accent Color */
+        .btn-reset {
+            color: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+        
+        /* Execute GIF Synthesis Button - Classic Green */
+        .btn-export {
+            border-color: #39FF14;
+            color: #39FF14;
+        }
+        .btn-export:hover {
+            background-color: #39FF14;
+            color: var(--bg-color);
+            box-shadow: 0 0 10px #39FF14;
+        }
+
+        /* Download Button - Cyan for distinct action */
+        .btn-download {
+            border-color: #00FFFF; 
+            color: #00FFFF;
+        }
+        .btn-download:hover {
+            background-color: #00FFFF;
+            color: var(--bg-color);
+            box-shadow: 0 0 10px #00FFFF;
+        }
+        
+        /* End Button Styles */
+        
     </style>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
@@ -278,15 +244,11 @@
             // --- UI/THEME LOGIC ---
             const savedTheme = localStorage.getItem("petpet-theme") || "retro-matrix";
             
-            // Function to apply theme classes/properties
             const applyTheme = (theme) => {
                 htmlElement.setAttribute("data-theme", theme);
                 localStorage.setItem("petpet-theme", theme);
                 
-                // Check if the theme is a gradient theme
                 const isGradient = theme === "neon-spectra" || theme === "lava-flow";
-                
-                // Find all elements that need to support the gradient text effect
                 const gradientTargets = document.querySelectorAll('.gradient-target');
                 
                 gradientTargets.forEach(el => {
@@ -306,7 +268,7 @@
             });
 
 
-            // Typing Animation Setup (Mocking phrases)
+            // Typing Animation Setup
             const phrases = [
                 "SYSTEM INIT: PETPET SYNTHESIZER // V2.0 (Still works, surprisingly)",
                 "ACCESS DENIED. Just kidding, you're fine.",
@@ -406,7 +368,7 @@
                                     class="jam jam-upload"></i></button>
                         </div>
                         <p id="uploadError" class="error-message"></p>
-                        <p class="help"><strong>WARNING</strong>: Servers hate you. Don't expect this to work.</p>
+                        <p class="help"><strong>WARNING</strong>: Servers hate you. Local upload is safer.</p>
                     </div>
                 </details>
             </div>
@@ -431,24 +393,24 @@
             </div>
 
             <details>
-                <summary class="gradient-target">IMAGE/HAND ADJUSTMENT CONTROLS</summary>
+                <summary class="gradient-target">ADJUSTMENT CONTROLS</summary>
                 <div class="preview-controls">
-                    <div class="content-heading gradient-target">>> HAND/PETTING SUBROUTINE</div>
+                    <div class="content-heading gradient-target">>> HAND SUBROUTINE</div>
                     <div class="row control-group">
-                        <label for="handScale" class="control-label control-group-s">HAND SCALE</label>
+                        <label for="handScale" class="control-label control-group-s">SCALE</label>
                         <input id="handScale" class="control-range control-group-l" type="range" step="1" min="50" max="300"
                             value="100">
                     </div>
                     <div class="row control-group">
-                        <label for="handYOffset" class="control-label control-group-s">HAND Y-OFFSET</label>
+                        <label for="handYOffset" class="control-label control-group-s">Y-OFFSET</label>
                         <input id="handYOffset" class="control-range control-group-l" type="range" step="1" min="-50" max="50"
                             value="0">
                     </div>
                     
-                    <div class="content-heading gradient-target">>> ADVANCED IMAGE ADJUSTMENT</div>
+                    <div class="content-heading gradient-target">>> IMAGE ADJUSTMENT</div>
                     <div class="row">
                         <div class="control-group">
-                            <label for="toggleAdjust" class="control-label control-group-l">MANUAL OVERRIDE</label>
+                            <label for="toggleAdjust" class="control-label control-group-l">OVERRIDE</label>
                             <label for="toggleAdjust" class="toggle-switch">
                                 <input id="toggleAdjust" type="checkbox" class="toggle-switch-input">
                                 <span class="toggle-switch-control"></span>
@@ -457,18 +419,18 @@
                         <div class="hint">Enable drag/arrow control. It's not hard.</div>
                     </div>
                     <div class="row control-group">
-                        <label for="toggleFlip" class="control-label control-group-s">FLIP AXIS</label>
+                        <label for="toggleFlip" class="control-label control-group-s">FLIP</label>
                         <label for="toggleFlip" class="toggle-switch sm">
                             <input id="toggleFlip" type="checkbox" class="toggle-switch-input">
                             <span class="toggle-switch-control"></span>
                         </label>
                     </div>
                     <div class="row control-group">
-                        <label for="scale" class="control-label control-group-s">SCALING FACTOR</label>
+                        <label for="scale" class="control-label control-group-s">SCALE</label>
                         <input id="scale" class="control-range control-group-l" type="range" step="1" min="15" max="200" value="85">
                     </div>
                     <div class="row control-group">
-                        <label for="squish" class="control-label control-group-s">COLLISION</label>
+                        <label for="squish" class="control-label control-group-s">SQUISH</label>
                         <input id="squish" class="control-range control-group-l" type="range" step="1" min="100" max="300"
                             value="125">
                     </div>
@@ -476,7 +438,7 @@
             </details>
             <div class="content-heading gradient-target">>> FRAME SYNCHRONIZATION</div>
             <div class="row control-group">
-                <label for="fps" class="control-label control-group-s">FRAME RATE (Hz)</label>
+                <label for="fps" class="control-label control-group-s">RATE (Hz)</label>
                 <input id="fps" class="control-range" type="range" step="2" min="2" max="60" value="16">
                 <input type="number" id="fpsVal" class="control control-sm" step="1" min="2" max="60" value="16">
             </div>
@@ -501,10 +463,10 @@
             </figure>
             
             <details>
-                <summary class="gradient-target">DATA RETENTION & INTEGRITY REPORT</summary>
+                <summary class="gradient-target">DATA INTEGRITY REPORT</summary>
                 <div class="content-body">
                     <p class="help">
-                        <strong>WARNING</strong>: Data is temporary. Download it, or lose it. We won't remind you twice.
+                        <strong>WARNING</strong>: Data is temporary. Download it, or lose it.
                     </p>
                     <p class="help">If green appears: It's your browser. We are perfect.</p>
                 </div>
