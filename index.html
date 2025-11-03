@@ -24,6 +24,9 @@
             --font-sans: 'Inter', sans-serif;
             --radius-sm: 0;
             --error-color: #FF0000;
+            
+            /* Sizing variable */
+            --image-size: 180px;
         }
 
         /* DEFAULT (GREEN) */
@@ -85,7 +88,6 @@
             text-shadow: 0 0 1px var(--text-color);
             box-shadow: inset 0 0 10px rgba(57, 255, 20, 0.4);
             font-size: 14px;
-            /* Scroll lock class */
             overflow-y: auto;
         }
         
@@ -93,14 +95,13 @@
             overflow-y: hidden !important;
         }
 
-        /* Rich Text / Bold Styling */
         strong {
             font-weight: 700;
             color: var(--accent-color);
             text-shadow: 0 0 3px var(--accent-color);
         }
 
-        /* Grid Layout (Mobile Optimized) */
+        /* Grid Layout */
         .grid {
             margin: 0 auto;
             max-width: 1200px;
@@ -116,7 +117,6 @@
                 "footer";
         }
         
-        /* Desktop Layout (Two Columns) */
         @media only screen and (min-width: 768px) {
             .grid {
                 grid-template-columns: 1fr 1fr;
@@ -167,61 +167,51 @@
             content: "v ";
         }
         
-        /* Header Fix */
-        .heading {
-            /* ... (styles from previous step) ... */
-            font-family: var(--font-mono);
-            font-size: 1.6em;
-            font-weight: 400;
-            color: var(--text-color);
-            text-shadow: 0 0 5px var(--text-color);
-            height: auto; 
-            white-space: normal; 
-            overflow: visible;
-            display: block; 
-            width: 100%; 
-        }
-        @media only screen and (min-width: 768px) {
-            .heading { 
-                font-size: 1.8em;
-                white-space: nowrap;
-                width: auto;
-                display: inline-block;
-            }
-        }
-
         .content-heading { /* Used for titles *inside* open details blocks */
             font-size: 1.1em;
             color: var(--text-color);
             border-bottom: 1px dashed var(--accent-color);
             padding-bottom: 5px;
+            margin-top: 15px;
             margin-bottom: 15px;
             font-weight: 400;
             text-transform: uppercase;
         }
 
-
-        /* Preview/Canvas & Output (Reduced Size) */
-        .canvas {
-            width: 200px; /* Reduced from 250px */
-            height: 200px; /* Reduced from 250px */
+        /* --- UNIFORM IMAGE SIZING --- */
+        .drop-area-preview, 
+        .canvas, 
+        #result {
+            width: var(--image-size);
+            height: var(--image-size);
             max-width: 100%;
             border: 2px solid var(--accent-color);
             box-shadow: 0 0 10px var(--accent-color);
             background-color: #0d0d0d;
-            margin: 0 auto;
+            margin: 0 auto 15px auto;
             display: block;
         }
 
-        #result {
-            width: 200px; /* Reduced from 250px */
-            height: 200px; /* Reduced from 250px */
-            max-width: 100%;
-            border: 2px solid var(--accent-color);
-            box-shadow: 0 0 10px var(--accent-color);
-            background-color: #0d0d0d;
-            margin: 0 auto;
-            display: block;
+        /* Drop Area Specific Styles */
+        .drop-area-upload-text {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            min-height: 40px; 
+            cursor: pointer;
+            padding: 10px;
+        }
+        
+        .drop-area-file-input {
+            display: none;
+        }
+        
+        .hint {
+            font-size: 0.8em;
+            color: rgba(57, 255, 20, 0.7);
+            margin-top: 5px;
         }
 
         /* Controls / Range Sliders (Animations retained) */
@@ -254,7 +244,6 @@
         }
         /* End New Hand Controls Styling */
 
-
     </style>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
@@ -284,7 +273,6 @@
             });
 
             // --- UI/THEME LOGIC ---
-            // Terminal Colors Setup
             const savedTheme = localStorage.getItem("petpet-theme") || "green";
             htmlElement.setAttribute("data-theme", savedTheme);
             themeSelector.value = savedTheme;
@@ -296,7 +284,7 @@
             });
 
 
-            // Typing Animation Setup
+            // Typing Animation Setup (Mocking phrases)
             const phrases = [
                 "SYSTEM INIT: PETPET SYNTHESIZER // V2.0 (Still works, surprisingly)",
                 "ACCESS DENIED. Just kidding, you're fine.",
@@ -314,38 +302,32 @@
             function type() {
                 const currentPhrase = phrases[phraseIndex];
                 
-                // Typing/Deleting logic
                 if (isDeleting) {
                     headingElement.innerHTML = currentPhrase.substring(0, charIndex - 1) + '<span class="typing-cursor"></span>';
                     charIndex--;
-                    typingSpeed = 30; // Faster delete
+                    typingSpeed = 30;
                 } else {
                     headingElement.innerHTML = currentPhrase.substring(0, charIndex + 1) + '<span class="typing-cursor"></span>';
                     charIndex++;
-                    typingSpeed = 70; // Standard type speed
+                    typingSpeed = 70;
                 }
 
                 if (!isDeleting && charIndex > currentPhrase.length) {
-                    // Phrase completed, wait and start deleting
                     isDeleting = true;
                     setTimeout(type, initialDelay);
                     return;
                 } else if (isDeleting && charIndex <= 0) {
-                    // Deletion completed, move to next phrase
                     isDeleting = false;
                     phraseIndex = (phraseIndex + 1) % phrases.length;
-                    charIndex = 0; // Reset character index for next phrase
-                    typingSpeed = 150; // Pause briefly before typing
+                    charIndex = 0;
+                    typingSpeed = 150;
                 }
 
-                // Continue loop
                 setTimeout(type, typingSpeed);
             }
 
-            // Start the animation
             setTimeout(type, 100);
 
-            // Original theme toggle functionality retained (for light/dark if ever added back)
             document.querySelectorAll("a.e").forEach(x => { x.href = x.dataset.href }); 
         });
     </script>
@@ -381,16 +363,15 @@
                         <img width="112" height="112" class="drop-area-preview preview-image" src="index.html" id="uploadPreview">
                         
                         <div class="drop-area-upload-text">
-                            <label id="uploadFileName" class="drop-area-upload-filename">Click, Drag, or Drop Your Binary Payload</label>
-                            <p class="hint">(Image preview is located directly above this text block. Yes, this is counter-intuitive.)</p>
+                            <label id="uploadFileName" class="drop-area-upload-filename">CLICK/DRAG/DROP DATA</label>
                         </div>
                     </div>
                 </label>
                 
                 <details>
-                    <summary>Remote Access / Upload Protocol Details</summary>
+                    <summary>REMOTE ACCESS (IF LOCAL FAILS)</summary>
                     <div class="content-body">
-                        <div class="content-heading" style="margin-top: 15px;">>> REMOTE ACCESS (BETA)</div>
+                        <div class="content-heading">>> REMOTE URI INPUT</div>
                         <div class="row control-group">
                             <input class="control control-group-l control-has-icon control-grouped-left" type="url" required
                                 placeholder="Paste remote data URI (URL)" id="uploadUrl">
@@ -398,7 +379,7 @@
                                     class="jam jam-upload"></i></button>
                         </div>
                         <p id="uploadError" class="error-message"></p>
-                        <p class="help"><strong>PROTOCOL ANOMALY</strong>: External URL fetching is prone to failure due to cross-origin server hostility. If remote access is denied, try local upload. Yes, we know it's annoying.</p>
+                        <p class="help"><strong>WARNING</strong>: Cross-origin servers hate you. Don't expect this to work.</p>
                     </div>
                 </details>
             </div>
@@ -423,11 +404,11 @@
             </div>
 
             <details>
-                <summary>Adjustments & Fine-Tuning Protocols</summary>
+                <summary>IMAGE/HAND ADJUSTMENT CONTROLS</summary>
                 <div class="preview-controls">
-                    <div class="content-heading" style="margin-top: 20px;">>> HAND/PETTING SUBROUTINE ADJUSTMENT</div>
+                    <div class="content-heading">>> HAND/PETTING SUBROUTINE</div>
                     <div class="row control-group">
-                        <label for="handScale" class="control-label control-group-s">HAND SCALING</label>
+                        <label for="handScale" class="control-label control-group-s">HAND SCALE</label>
                         <input id="handScale" class="control-range control-group-l" type="range" step="1" min="50" max="300"
                             value="100">
                     </div>
@@ -437,19 +418,16 @@
                             value="0">
                     </div>
                     
-                    <div class="content-heading" style="margin-top: 20px;">>> ADVANCED IMAGE ADJUSTMENT</div>
+                    <div class="content-heading">>> ADVANCED IMAGE ADJUSTMENT</div>
                     <div class="row">
                         <div class="control-group">
-                            <label for="toggleAdjust" class="control-label control-group-l">POSITIONING INTERFACE</label>
+                            <label for="toggleAdjust" class="control-label control-group-l">MANUAL OVERRIDE</label>
                             <label for="toggleAdjust" class="toggle-switch">
                                 <input id="toggleAdjust" type="checkbox" class="toggle-switch-input">
                                 <span class="toggle-switch-control"></span>
                             </label>
                         </div>
-                        <div class="hint">
-                            Enable <strong>Manual Override</strong> to translate image coordinates using pointer/keyboard. Yes, it's just drag-and-drop, it's not actually that complex.
-                            <a class="e" data-href="https://i.imgur.com/q0NE5rh.jpg" target="_blank"></a>
-                        </div>
+                        <div class="hint">Enable drag/arrow key control. It's not rocket science.</div>
                     </div>
                     <div class="row control-group">
                         <label for="toggleFlip" class="control-label control-group-s">FLIP AXIS</label>
@@ -463,13 +441,13 @@
                         <input id="scale" class="control-range control-group-l" type="range" step="1" min="15" max="200" value="85">
                     </div>
                     <div class="row control-group">
-                        <label for="squish" class="control-label control-group-s">COLLISION COMPRESSION</label>
+                        <label for="squish" class="control-label control-group-s">COLLISION</label>
                         <input id="squish" class="control-range control-group-l" type="range" step="1" min="100" max="300"
                             value="125">
                     </div>
                 </div>
             </details>
-            <div class="content-heading" style="margin-top: 20px;">>> FRAME SYNCHRONIZATION</div>
+            <div class="content-heading">>> FRAME SYNCHRONIZATION</div>
             <div class="row control-group">
                 <label for="fps" class="control-label control-group-s">FRAME RATE (Hz)</label>
                 <input id="fps" class="control-range" type="range" step="2" min="2" max="60" value="16">
@@ -485,7 +463,7 @@
             </div>
         </section>
 
-        <section class="output content">
+        <section class="output content" id="outputSection">
             <div class="content-heading">>> FINAL DATA CONSOLIDATION</div>
             <figure class="preview-image-container">
                 <img width="112" height="112" class="preview-image" id="result">
@@ -496,28 +474,28 @@
             </figure>
             
             <details>
-                <summary>Data Retention & Integrity Report</summary>
+                <summary>DATA RETENTION & INTEGRITY REPORT</summary>
                 <div class="content-body">
                     <p class="help">
-                        <a data-href='https://i.imgur.com/hPUOCb1.jpg' target="_blank" class="e">NOTE</a>: The generated GIF is ephemeral client-side data. <strong>DOWNLOAD IMMEDIATELY</strong> if you want to keep it. The link *will* self-terminate upon browser refresh. You've been warned.
+                        <strong>WARNING</strong>: This data is temporary. Download it, or lose it. We won't remind you again.
                     </p>
-                    <p class="help">If residual green artifacts are detected, initiate browser-side cache purge (Try a different browser). Our algorithms are flawless; the fault lies with your client system.</p>
+                    <p class="help">If green appears: It's your browser, not us. We are perfect.</p>
                 </div>
             </details>
             </section>
 
         <footer class="footer help">
             <div>
-                <a href="v1">LEGACY V1 INTERFACE (Why would you go back?)</a>
+                <a href="v1">LEGACY V1 (Don't.)</a>
                 <span class="separator">|</span>
-                RESOURCE TEMPLATES: <a href="img/template.gif" target="_blank">GIF</a>, <a href="img/sprite.png"
+                RESOURCES: <a href="img/template.gif" target="_blank">GIF</a>, <a href="img/sprite.png"
                     target="_blank">SPRITE</a>
                 <span class="separator">|</span>
-                FRAMEWORK STATUS: Using <strong>gif.js</strong> for high-speed client-side image sequence encoding. You're welcome.
+                FRAMEWORK: <strong>gif.js</strong> (Because we could.)
             </div>
             <br>
             <a class="e fingies" id="fg" data-href="https://neocities.org/site/benisland" title="😳" target="_blank">
-                <span class="fl">👉</span><span>👈</span> (Source Code Interrogation - Go ahead, try to find a bug.)
+                <span class="fl">👉</span><span>👈</span> (Code Interrogation - Find a bug? Doubtful.)
             </a>
             <br>
         </footer>
