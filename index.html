@@ -85,6 +85,12 @@
             text-shadow: 0 0 1px var(--text-color);
             box-shadow: inset 0 0 10px rgba(57, 255, 20, 0.4);
             font-size: 14px;
+            /* Scroll lock class */
+            overflow-y: auto;
+        }
+        
+        body.scroll-lock {
+            overflow-y: hidden !important;
         }
 
         /* Rich Text / Bold Styling */
@@ -133,37 +139,58 @@
             border-radius: var(--radius-sm);
             box-shadow: 0 0 5px var(--accent-color);
         }
-
-        .header {
-            grid-area: header;
-            text-align: left;
-            padding: 5px 0;
+        
+        /* Collapsible Details Styling */
+        details {
+            border: none;
+            padding: 0;
+            margin: 0;
         }
         
-        /* Mobile Header Fix: Allow dynamic heading to wrap, preventing horizontal overflow */
+        details > summary {
+            list-style: none;
+            cursor: pointer;
+            border-bottom: 1px dashed var(--accent-color);
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            font-size: 1.1em;
+            color: var(--text-color);
+            font-weight: 400;
+        }
+
+        details > summary::before {
+            content: "> ";
+        }
+
+        details[open] > summary::before {
+            content: "v ";
+        }
+        
+        /* Header Fix */
         .heading {
+            /* ... (styles from previous step) ... */
             font-family: var(--font-mono);
             font-size: 1.6em;
             font-weight: 400;
             color: var(--text-color);
             text-shadow: 0 0 5px var(--text-color);
-            height: auto; /* Allow height to adjust */
-            white-space: normal; /* Allow text to wrap */
+            height: auto; 
+            white-space: normal; 
             overflow: visible;
-            display: block; /* Use block to occupy space and allow wrapping */
-            width: 100%; /* Important for text-wrapping to function correctly */
+            display: block; 
+            width: 100%; 
         }
         @media only screen and (min-width: 768px) {
             .heading { 
                 font-size: 1.8em;
-                white-space: nowrap; /* Prevent wrap on desktop */
+                white-space: nowrap;
                 width: auto;
                 display: inline-block;
             }
         }
 
-
-        .content-heading {
+        .content-heading { /* Used for titles *inside* open details blocks */
             font-size: 1.1em;
             color: var(--text-color);
             border-bottom: 1px dashed var(--accent-color);
@@ -173,36 +200,32 @@
             text-transform: uppercase;
         }
 
-        /* Drop Area Specific Styles */
-        .drop-area-upload-text {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            min-height: 100px; 
-            cursor: pointer; /* Indicate it's clickable */
-            padding: 10px;
-        }
-        
-        /* Hide the file input entirely, as the label now handles the click */
-        .drop-area-file-input {
-            display: none;
-        }
-        
-        /* Controls */
-        /* ... (other control styles remain) ... */
 
+        /* Preview/Canvas & Output (Reduced Size) */
+        .canvas {
+            width: 200px; /* Reduced from 250px */
+            height: 200px; /* Reduced from 250px */
+            max-width: 100%;
+            border: 2px solid var(--accent-color);
+            box-shadow: 0 0 10px var(--accent-color);
+            background-color: #0d0d0d;
+            margin: 0 auto;
+            display: block;
+        }
+
+        #result {
+            width: 200px; /* Reduced from 250px */
+            height: 200px; /* Reduced from 250px */
+            max-width: 100%;
+            border: 2px solid var(--accent-color);
+            box-shadow: 0 0 10px var(--accent-color);
+            background-color: #0d0d0d;
+            margin: 0 auto;
+            display: block;
+        }
+
+        /* Controls / Range Sliders (Animations retained) */
         .control-range {
-            -webkit-appearance: none;
-            width: 100%;
-            height: 4px;
-            background: #0d0d0d;
-            outline: none;
-            opacity: 0.8;
-            border: 1px solid var(--accent-color);
-            
-            /* ADDED ANIMATION: Shadow glow on interaction */
             transition: box-shadow 0.15s ease-in-out, border-color 0.15s ease-in-out;
         }
         
@@ -212,16 +235,6 @@
         }
 
         .control-range::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 12px;
-            height: 12px;
-            border-radius: 0;
-            background: var(--accent-color);
-            cursor: pointer;
-            box-shadow: 0 0 3px var(--accent-color);
-
-            /* ADDED ANIMATION: Larger/stronger shadow on active drag */
             transition: box-shadow 0.15s ease-in-out;
         }
         
@@ -229,70 +242,18 @@
              box-shadow: 0 0 10px var(--accent-color), 0 0 2px var(--bg-color) inset;
         }
 
-        /* Hand Controls Styling - Now uses a themed --hand-accent variable */
-        #handYOffset, #handScale {
-            border-color: var(--hand-accent);
-        }
-        
-        #handYOffset:hover, #handScale:hover {
-            box-shadow: 0 0 8px var(--hand-accent);
-        }
-
+        /* Hand Controls Styling */
+        #handYOffset, #handScale { border-color: var(--hand-accent); }
+        #handYOffset:hover, #handScale:hover { box-shadow: 0 0 8px var(--hand-accent); }
         #handYOffset::-webkit-slider-thumb, #handScale::-webkit-slider-thumb {
             background: var(--hand-accent);
             box-shadow: 0 0 3px var(--hand-accent);
         }
-        
         #handYOffset::-webkit-slider-thumb:active, #handScale::-webkit-slider-thumb:active {
              box-shadow: 0 0 10px var(--hand-accent), 0 0 2px var(--bg-color) inset;
         }
         /* End New Hand Controls Styling */
 
-
-        /* Buttons, Inputs, etc. (Styles remain consistent) */
-        
-        .btn {
-            background-color: transparent;
-            color: var(--text-color);
-            border: 1px solid var(--accent-color);
-            padding: 8px 15px;
-            text-transform: uppercase;
-            font-weight: 400;
-            cursor: pointer;
-            transition: all 0.2s;
-            border-radius: var(--radius-sm);
-            text-align: center;
-            display: block;
-        }
-        
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            background-color: var(--input-bg);
-            color: var(--text-color);
-            box-shadow: none;
-        }
-
-
-        /* Theme Selector Styles */
-        #theme-selector {
-            background-color: var(--input-bg);
-            border: 1px solid var(--accent-color);
-            color: var(--text-color);
-            padding: 5px;
-            font-family: var(--font-mono);
-        }
-
-        /* Mock Terminal Cursor/Blinking Effect for dynamic typing */
-        .typing-cursor {
-            border-right: 0.1em solid var(--text-color);
-            animation: blink 0.7s step-end infinite;
-        }
-
-        @keyframes blink {
-            from, to { border-color: transparent }
-            50% { border-color: var(--text-color) }
-        }
 
     </style>
     <script>
@@ -300,7 +261,29 @@
             const headingElement = document.getElementById("typing-heading");
             const themeSelector = document.getElementById("theme-selector");
             const htmlElement = document.documentElement;
+            const canvas = document.getElementById("canvas");
+            const body = document.body;
             
+            // --- SCROLL LOCK LOGIC ---
+            let isDragging = false;
+            
+            canvas.addEventListener("pointerdown", (e) => {
+                if(document.getElementById("toggleAdjust").checked) {
+                    isDragging = true;
+                    body.classList.add("scroll-lock");
+                }
+            });
+            
+            ["pointerup", "pointerout"].forEach(event => {
+                canvas.addEventListener(event, (e) => {
+                    if (isDragging) {
+                        isDragging = false;
+                        body.classList.remove("scroll-lock");
+                    }
+                });
+            });
+
+            // --- UI/THEME LOGIC ---
             // Terminal Colors Setup
             const savedTheme = localStorage.getItem("petpet-theme") || "green";
             htmlElement.setAttribute("data-theme", savedTheme);
@@ -395,7 +378,7 @@
                     <div class="drop-area-input">
                         <input class="drop-area-file-input" type="file" id="uploadFile" accept="image/*">
                         
-                        <img class="drop-area-preview preview-image" src="index.html" id="uploadPreview">
+                        <img width="112" height="112" class="drop-area-preview preview-image" src="index.html" id="uploadPreview">
                         
                         <div class="drop-area-upload-text">
                             <label id="uploadFileName" class="drop-area-upload-filename">Click, Drag, or Drop Your Binary Payload</label>
@@ -404,15 +387,20 @@
                     </div>
                 </label>
                 
-                <div class="content-heading" style="margin-top: 20px;">>> REMOTE ACCESS (BETA)</div>
-                <div class="row control-group">
-                    <input class="control control-group-l control-has-icon control-grouped-left" type="url" required
-                        placeholder="Paste remote data URI (URL)" id="uploadUrl">
-                    <button type="submit" class="btn control-icon control-grouped-right" id="uploadUrlBtn"><i
-                            class="jam jam-upload"></i></button>
-                </div>
-                <p id="uploadError" class="error-message"></p>
-                <p class="help"><strong>PROTOCOL ANOMALY</strong>: External URL fetching is prone to failure due to cross-origin server hostility. If remote access is denied, try local upload. Yes, we know it's annoying.</p>
+                <details>
+                    <summary>Remote Access / Upload Protocol Details</summary>
+                    <div class="content-body">
+                        <div class="content-heading" style="margin-top: 15px;">>> REMOTE ACCESS (BETA)</div>
+                        <div class="row control-group">
+                            <input class="control control-group-l control-has-icon control-grouped-left" type="url" required
+                                placeholder="Paste remote data URI (URL)" id="uploadUrl">
+                            <button type="submit" class="btn control-icon control-grouped-right" id="uploadUrlBtn"><i
+                                    class="jam jam-upload"></i></button>
+                        </div>
+                        <p id="uploadError" class="error-message"></p>
+                        <p class="help"><strong>PROTOCOL ANOMALY</strong>: External URL fetching is prone to failure due to cross-origin server hostility. If remote access is denied, try local upload. Yes, we know it's annoying.</p>
+                    </div>
+                </details>
             </div>
         </section>
 
@@ -434,62 +422,66 @@
                 </div>
             </div>
 
-            <div class="preview-controls">
-                <div class="content-heading" style="margin-top: 20px;">>> HAND/PETTING SUBROUTINE ADJUSTMENT</div>
-                <div class="row control-group">
-                    <label for="handScale" class="control-label control-group-s">HAND SCALING</label>
-                    <input id="handScale" class="control-range control-group-l" type="range" step="1" min="50" max="300"
-                        value="100">
-                </div>
-                <div class="row control-group">
-                    <label for="handYOffset" class="control-label control-group-s">HAND Y-OFFSET</label>
-                    <input id="handYOffset" class="control-range control-group-l" type="range" step="1" min="-50" max="50"
-                        value="0">
-                </div>
-                
-                <div class="content-heading" style="margin-top: 20px;">>> IMAGE SUBROUTINE ADJUSTMENT</div>
-                <div class="row">
-                    <div class="control-group">
-                        <label for="toggleAdjust" class="control-label control-group-l">POSITIONING INTERFACE</label>
-                        <label for="toggleAdjust" class="toggle-switch">
-                            <input id="toggleAdjust" type="checkbox" class="toggle-switch-input">
+            <details>
+                <summary>Adjustments & Fine-Tuning Protocols</summary>
+                <div class="preview-controls">
+                    <div class="content-heading" style="margin-top: 20px;">>> HAND/PETTING SUBROUTINE ADJUSTMENT</div>
+                    <div class="row control-group">
+                        <label for="handScale" class="control-label control-group-s">HAND SCALING</label>
+                        <input id="handScale" class="control-range control-group-l" type="range" step="1" min="50" max="300"
+                            value="100">
+                    </div>
+                    <div class="row control-group">
+                        <label for="handYOffset" class="control-label control-group-s">HAND Y-OFFSET</label>
+                        <input id="handYOffset" class="control-range control-group-l" type="range" step="1" min="-50" max="50"
+                            value="0">
+                    </div>
+                    
+                    <div class="content-heading" style="margin-top: 20px;">>> ADVANCED IMAGE ADJUSTMENT</div>
+                    <div class="row">
+                        <div class="control-group">
+                            <label for="toggleAdjust" class="control-label control-group-l">POSITIONING INTERFACE</label>
+                            <label for="toggleAdjust" class="toggle-switch">
+                                <input id="toggleAdjust" type="checkbox" class="toggle-switch-input">
+                                <span class="toggle-switch-control"></span>
+                            </label>
+                        </div>
+                        <div class="hint">
+                            Enable <strong>Manual Override</strong> to translate image coordinates using pointer/keyboard. Yes, it's just drag-and-drop, it's not actually that complex.
+                            <a class="e" data-href="https://i.imgur.com/q0NE5rh.jpg" target="_blank"></a>
+                        </div>
+                    </div>
+                    <div class="row control-group">
+                        <label for="toggleFlip" class="control-label control-group-s">FLIP AXIS</label>
+                        <label for="toggleFlip" class="toggle-switch sm">
+                            <input id="toggleFlip" type="checkbox" class="toggle-switch-input">
                             <span class="toggle-switch-control"></span>
                         </label>
                     </div>
-                    <div class="hint">
-                        Enable <strong>Manual Override</strong> to translate image coordinates using pointer/keyboard. Yes, it's just drag-and-drop, it's not actually that complex.
-                        <a class="e" data-href="https://i.imgur.com/q0NE5rh.jpg" target="_blank"></a>
+                    <div class="row control-group">
+                        <label for="scale" class="control-label control-group-s">SCALING FACTOR</label>
+                        <input id="scale" class="control-range control-group-l" type="range" step="1" min="15" max="200" value="85">
+                    </div>
+                    <div class="row control-group">
+                        <label for="squish" class="control-label control-group-s">COLLISION COMPRESSION</label>
+                        <input id="squish" class="control-range control-group-l" type="range" step="1" min="100" max="300"
+                            value="125">
                     </div>
                 </div>
-                <div class="row control-group">
-                    <label for="toggleFlip" class="control-label control-group-s">FLIP AXIS</label>
-                    <label for="toggleFlip" class="toggle-switch sm">
-                        <input id="toggleFlip" type="checkbox" class="toggle-switch-input">
-                        <span class="toggle-switch-control"></span>
-                    </label>
+            </details>
+            <div class="content-heading" style="margin-top: 20px;">>> FRAME SYNCHRONIZATION</div>
+            <div class="row control-group">
+                <label for="fps" class="control-label control-group-s">FRAME RATE (Hz)</label>
+                <input id="fps" class="control-range" type="range" step="2" min="2" max="60" value="16">
+                <input type="number" id="fpsVal" class="control control-sm" step="1" min="2" max="60" value="16">
+            </div>
+            
+            <div class="row export-row">
+                <div class="control-group">
+                    <button id="reset" class="btn btn-reset control-group-s">RESET CONFIG</button>
+                    <div class="spacer" style="width:0.382em"></div>
+                    <button id="export" class="btn btn-export control-group-l">EXECUTE GIF SYNTHESIS</button>
                 </div>
-                <div class="row control-group">
-                    <label for="scale" class="control-label control-group-s">SCALING FACTOR</label>
-                    <input id="scale" class="control-range control-group-l" type="range" step="1" min="15" max="200" value="85">
-                </div>
-                <div class="row control-group">
-                    <label for="squish" class="control-label control-group-s">COLLISION COMPRESSION</label>
-                    <input id="squish" class="control-range control-group-l" type="range" step="1" min="100" max="300"
-                        value="125">
-                </div>
-                <div class="row control-group">
-                    <label for="fps" class="control-label control-group-s">FRAME RATE (Hz)</label>
-                    <input id="fps" class="control-range" type="range" step="2" min="2" max="60" value="16">
-                    <input type="number" id="fpsVal" class="control control-sm" step="1" min="2" max="60" value="16">
-                </div>
-                <div class="row export-row">
-                    <div class="control-group">
-                        <button id="reset" class="btn btn-reset control-group-s">RESET CONFIG</button>
-                        <div class="spacer" style="width:0.382em"></div>
-                        <button id="export" class="btn btn-export control-group-l">EXECUTE GIF SYNTHESIS</button>
-                    </div>
-                </div>
-
             </div>
         </section>
 
@@ -502,11 +494,17 @@
                     <i class="jam jam-download"></i> DOWNLOAD DATA FILE
                 </button>
             </figure>
-            <p class="help">
-                <a data-href='https://i.imgur.com/hPUOCb1.jpg' target="_blank" class="e">NOTE</a>: The generated GIF is ephemeral client-side data. <strong>DOWNLOAD IMMEDIATELY</strong> if you want to keep it. The link *will* self-terminate upon browser refresh. You've been warned.
-            </p>
-            <p class="help">If residual green artifacts are detected, initiate browser-side cache purge (Try a different browser). Our algorithms are flawless; the fault lies with your client system.</p>
-        </section>
+            
+            <details>
+                <summary>Data Retention & Integrity Report</summary>
+                <div class="content-body">
+                    <p class="help">
+                        <a data-href='https://i.imgur.com/hPUOCb1.jpg' target="_blank" class="e">NOTE</a>: The generated GIF is ephemeral client-side data. <strong>DOWNLOAD IMMEDIATELY</strong> if you want to keep it. The link *will* self-terminate upon browser refresh. You've been warned.
+                    </p>
+                    <p class="help">If residual green artifacts are detected, initiate browser-side cache purge (Try a different browser). Our algorithms are flawless; the fault lies with your client system.</p>
+                </div>
+            </details>
+            </section>
 
         <footer class="footer help">
             <div>
