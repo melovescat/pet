@@ -279,6 +279,21 @@
             padding: 5px;
             font-family: var(--font-mono);
         }
+        
+        /* Drop Area Specific Styles */
+        .drop-area-upload-text {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            min-height: 100px; /* Ensure the click target is large */
+        }
+        
+        /* Hide the file input entirely, as the label now handles the click */
+        .drop-area-file-input {
+            display: none;
+        }
 
     </style>
     <script>
@@ -381,12 +396,14 @@
                     <div class="drop-area-input">
                         <input class="drop-area-file-input" type="file" id="uploadFile" accept="image/*">
                         <img class="drop-area-preview preview-image" src="index.html" id="uploadPreview">
-                        <div class="drop-area-upload" for="uploadFile">
-                            <label for="uploadFile" class="drop-area-upload-btn btn">Upload Local Data</label>
-                            <label id="uploadFileName" class="drop-area-upload-filename">or Drag & Drop Binary Payload</label>
+                        <div class="drop-area-upload-text">
+                            <label id="uploadFileName" class="drop-area-upload-filename">Click, Drag, or Drop Your Binary Payload</label>
+                            <p class="hint">(Image preview is located directly above this text block. Yes, this is counter-intuitive.)</p>
                         </div>
                     </div>
                 </label>
+                
+                <div class="content-heading" style="margin-top: 20px;">>> REMOTE ACCESS (BETA)</div>
                 <div class="row control-group">
                     <input class="control control-group-l control-has-icon control-grouped-left" type="url" required
                         placeholder="Paste remote data URI (URL)" id="uploadUrl">
