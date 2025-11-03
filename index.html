@@ -25,19 +25,21 @@
             --font-sans: 'Inter', sans-serif;
             --radius-sm: 0;
             --error-color: #FF3333;
+            
+            /* Sizing variable */
             --image-size: 180px;
             
-            /* Gradient Defaults (for when gradient is enabled) */
-            --gradient-1: #FFB800; /* Yellow/Amber */
-            --gradient-2: #FF66CC; /* Pink */
-            --gradient-angle: 90deg;
+            /* Default Monochromatic Theme */
+            --text-color: #39FF14;
+            --accent-color: #00FFFF;
+            --hand-accent: #39FF14;
         }
 
-        /* --- THEMES (Multi-Color Palettes) --- */
+        /* --- MONOCHROMATIC THEMES --- */
         
         /* 1. RETRO MATRIX (Default - Green/Cyan Mix) */
         :root[data-theme="retro-matrix"] {
-            --text-color: #39FF14; 
+            --text-color: #39FF14;
             --accent-color: #00FFFF; 
             --hand-accent: #39FF14;
         }
@@ -46,14 +48,14 @@
         :root[data-theme="firewall-breach"] {
             --text-color: #FFB800; 
             --accent-color: #FF3333; 
-            --hand-accent: #FFB800;
+            --hand-accent: #FFB800; 
         }
         
         /* 3. VAPORWAVE (Pink/Blue/Purple Mix) */
         :root[data-theme="vaporwave"] {
             --text-color: #FF66CC; 
             --accent-color: #4A90E2; 
-            --hand-accent: #C06FE8;
+            --hand-accent: #C06FE8; 
         }
         
         /* 4. HACKER BLUE (Pure Blue/Cyan) */
@@ -62,15 +64,33 @@
             --accent-color: #4A90E2; 
             --hand-accent: #00FFFF; 
         }
-
-        /* 5. GRADIENT FLOW (Subtle Gradient Background) */
-        :root[data-theme="gradient-flow"] {
-            --text-color: #00FFFF;
-            --accent-color: #FF66CC;
-            --hand-accent: #FFB800;
-            background: linear-gradient(135deg, #020510 0%, #000000 100%);
-        }
         
+        /* --- GRADIENT THEMES (REQUIRES WEBKIT/MOZ SUPPORT) --- */
+
+        .gradient-text-style {
+            /* Reset color to transparent so the gradient shows */
+            color: transparent !important;
+            background-clip: text !important;
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+        }
+
+        /* 5. NEON SPECTRA (Rainbow Gradient) */
+        :root[data-theme="neon-spectra"] {
+            --accent-color: #FF66CC; /* Used for non-gradient elements */
+            --hand-accent: #00FFFF; 
+            
+            /* Background definition for the text */
+            background-image: linear-gradient(90deg, #FF66CC, #00FFFF, #39FF14, #FFB800);
+        }
+
+        /* 6. LAVA FLOW (Red/Orange/Yellow Gradient) */
+        :root[data-theme="lava-flow"] {
+            --accent-color: #FF3333;
+            --hand-accent: #FFB800;
+            background-image: linear-gradient(45deg, #FF3333, #FF6600, #FFB800);
+        }
+
         
         /* Base Styling */
         body {
@@ -86,72 +106,76 @@
             overflow-y: auto;
         }
         
-        body.scroll-lock {
-            overflow-y: hidden !important;
+        /* Apply the gradient style to all theme-affected elements for gradient themes */
+        [data-theme="neon-spectra"] *,
+        [data-theme="lava-flow"] * {
+            background-image: var(--background-image);
+        }
+        
+        [data-theme="neon-spectra"] .gradient-target,
+        [data-theme="lava-flow"] .gradient-target {
+             background-image: var(--background-image);
+             color: transparent; /* Mandatory for clip */
+             background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        /* Rich Text - Applies accent color/shadow to bold text */
         strong {
             font-weight: 700;
             color: var(--accent-color);
             text-shadow: 0 0 3px var(--accent-color);
         }
-        
-        /* --- GRADIENT TEXT STYLING --- */
-        .gradient-enabled .gradient-text-target, 
-        .gradient-enabled .content-heading,
-        .gradient-enabled details > summary {
-            background-image: linear-gradient(var(--gradient-angle), var(--gradient-1), var(--gradient-2));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text; /* Standard */
-            text-fill-color: transparent; /* Standard */
-            /* Fallback to accent color if gradients fail */
-            color: var(--accent-color); 
-        }
-        
-        /* --- UI DE-DEFAULTING --- */
 
-        /* Completely hide the default file input text and button */
+        /* TOTAL PURGE OF DEFAULT FILE INPUT VISUALS */
         .drop-area-file-input {
-            display: none;
+            display: none !important;
         }
 
-        /* Suppress native styling on the theme selector/dropdown */
-        #theme-selector {
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
-            background-image: none;
+        /* Controls */
+        /* ... (styles for controls, grid, etc. retained) ... */
+        
+        /* Collapsible Details Styling */
+        details {
+            border: none;
+            padding: 0;
+            margin: 0;
         }
         
-        /* Suppress default button text on the file field */
-        .drop-area-input input[type=file]::file-selector-button {
-            display: none;
+        details > summary {
+            list-style: none;
+            cursor: pointer;
+            border-bottom: 1px dashed var(--accent-color);
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            font-size: 1.1em;
+            color: var(--text-color);
+            font-weight: 400;
         }
 
-        /* Suppress default browser text on unstyled inputs */
-        input[type="url"], input[type="number"] {
-            /* This overrides any lingering white text from default browser styles */
-            color: var(--text-color) !important;
-            background-color: var(--input-bg);
-            border: 1px solid var(--accent-color);
-        }
-        
-        /* HIDE DEFAULT SUMMARY ARROW */
         details > summary::-webkit-details-marker {
             display: none;
         }
         
-        /* Custom arrow styling */
         details > summary::before {
             content: "> ";
             color: var(--accent-color);
-            padding-right: 5px;
         }
 
         details[open] > summary::before {
             content: "v ";
+        }
+        
+        .content-heading {
+            font-size: 1.1em;
+            color: var(--text-color);
+            border-bottom: 1px dashed var(--accent-color);
+            padding-bottom: 5px;
+            margin-top: 15px;
+            margin-bottom: 15px;
+            font-weight: 400;
+            text-transform: uppercase;
         }
 
         /* --- UNIFORM IMAGE SIZING (180x180) --- */
@@ -167,16 +191,67 @@
             margin: 0 auto 15px auto;
             display: block;
         }
+
+        /* Sliders and Hand Controls */
+        .control-range {
+            border: 1px solid var(--accent-color);
+            transition: box-shadow 0.15s ease-in-out, border-color 0.15s ease-in-out;
+        }
         
-        /* (Remaining styles from previous steps preserved) */
+        /* Apply accent color for monochromatic themes, gradient for others */
+        .control-range::-webkit-slider-thumb {
+            background: var(--accent-color);
+        }
+
+        /* Hand Controls - Uses Hand Accent Color */
+        #handYOffset, #handScale { border-color: var(--hand-accent); }
+        #handYOffset:hover, #handScale:hover { box-shadow: 0 0 8px var(--hand-accent); }
+        #handYOffset::-webkit-slider-thumb, #handScale::-webkit-slider-thumb {
+            background: var(--hand-accent);
+            box-shadow: 0 0 3px var(--hand-accent);
+        }
+        
+        /* The main themes selector is now hidden behind details */
+        .theme-select {
+            grid-area: theme-select;
+            text-align: right;
+            font-size: 0.9em;
+        }
+        .theme-select details {
+             border: none;
+             text-align: left;
+             width: 100%;
+        }
+        .theme-select summary {
+            border-bottom: none !important;
+            text-align: right;
+            margin-bottom: 5px;
+            padding-bottom: 0;
+            font-size: 1em;
+            text-shadow: 0 0 5px var(--text-color);
+        }
+        .theme-select summary::before {
+             content: ':: THEME OVERRIDE ';
+             font-size: 0.9em;
+        }
+        .theme-select details[open] summary::before {
+            content: ':: THEME OVERRIDE ';
+        }
+        .theme-select select {
+            background-color: var(--input-bg);
+            border: 1px solid var(--accent-color);
+            color: var(--text-color);
+            padding: 5px;
+            font-family: var(--font-mono);
+            width: 100%;
+        }
+
 
     </style>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             const headingElement = document.getElementById("typing-heading");
             const themeSelector = document.getElementById("theme-selector");
-            const gradientToggle = document.getElementById("gradientToggle");
-            const gradientAngleInput = document.getElementById("gradientAngle");
             const htmlElement = document.documentElement;
             const canvas = document.getElementById("canvas");
             const body = document.body;
@@ -200,44 +275,41 @@
                 });
             });
 
-            // --- UI/THEME & GRADIENT LOGIC ---
-            
-            function applyGradientStyle() {
-                if (gradientToggle.checked) {
-                    htmlElement.classList.add('gradient-enabled');
-                } else {
-                    htmlElement.classList.remove('gradient-enabled');
-                }
-                
-                // Update angle variable
-                const angle = parseInt(gradientAngleInput.value) || 90;
-                htmlElement.style.setProperty('--gradient-angle', `${angle}deg`);
-            }
-            
-            // Set initial theme
+            // --- UI/THEME LOGIC ---
             const savedTheme = localStorage.getItem("petpet-theme") || "retro-matrix";
-            htmlElement.setAttribute("data-theme", savedTheme);
+            
+            // Function to apply theme classes/properties
+            const applyTheme = (theme) => {
+                htmlElement.setAttribute("data-theme", theme);
+                localStorage.setItem("petpet-theme", theme);
+                
+                // Check if the theme is a gradient theme
+                const isGradient = theme === "neon-spectra" || theme === "lava-flow";
+                
+                // Find all elements that need to support the gradient text effect
+                const gradientTargets = document.querySelectorAll('.gradient-target');
+                
+                gradientTargets.forEach(el => {
+                    if (isGradient) {
+                        el.classList.add('gradient-text-style');
+                    } else {
+                        el.classList.remove('gradient-text-style');
+                    }
+                });
+            };
+
+            applyTheme(savedTheme);
             themeSelector.value = savedTheme;
 
             themeSelector.addEventListener("change", (e) => {
-                const newTheme = e.target.value;
-                htmlElement.setAttribute("data-theme", newTheme);
-                localStorage.setItem("petpet-theme", newTheme);
-                applyGradientStyle(); // Re-apply gradient if necessary
+                applyTheme(e.target.value);
             });
-            
-            // Gradient listeners
-            gradientToggle.addEventListener('change', applyGradientStyle);
-            gradientAngleInput.addEventListener('input', applyGradientStyle);
-            
-            // Initial gradient application
-            applyGradientStyle();
 
 
             // Typing Animation Setup (Mocking phrases)
             const phrases = [
-                "SYSTEM INIT: PETPET SYNTHESIZER // V2.0 (For Yuna)",
-                "ACCESS DENIED. Just kidding, you're fine, Yuna.",
+                "SYSTEM INIT: PETPET SYNTHESIZER // V2.0 (Still works, surprisingly)",
+                "ACCESS DENIED. Just kidding, you're fine.",
                 "PETPET.EXE: The highest quality digital affection simulation.",
                 "I'm not judging your image choices. I promise.",
                 "ERROR: Too much love detected. Proceeding anyway."
@@ -287,47 +359,29 @@
 <body>
     <main class="grid">
         <header class="header">
-            <div class="heading gradient-text-target" id="typing-heading"></div>
-            <div><span style="color: var(--error-color)">[ACCESS WARNING]:</span> Excessive processing demands *might* cause host system instability. We accept zero liability.</div>
+            <div class="heading gradient-target" id="typing-heading"></div>
+            <div>
+                <span style="color: var(--error-color)">[ACCESS WARNING]:</span> Excessive processing demands *might* cause host system instability. We accept zero liability.
+                <p class="help" style="margin-top: 5px;">DESIGNATED OPERATOR: <strong>YUNA</strong>. Customize the terminal to your (probably excellent) taste.</p>
+            </div>
         </header>
         
         <div class="theme-select">
-            TERMINAL THEME (FOR YUNA):
-            <select id="theme-selector">
-                <option value="retro-matrix">Retro Matrix (Green/Cyan)</option>
-                <option value="firewall-breach">Firewall Breach (Red/Amber)</option>
-                <option value="vaporwave">Vaporwave (Pink/Purple)</option>
-                <option value="hacker-blue">Hacker Blue (Blue/Cyan)</option>
-                <option value="gradient-flow">Gradient Flow (Subtle BG)</option>
-            </select>
-            
             <details>
-                <summary>TEXT GRADIENT OVERRIDE</summary>
-                <div class="content-body">
-                    <div class="content-heading">>> GRADIENT POWER MANAGEMENT</div>
-                    <div class="row">
-                        <div class="control-group">
-                            <label for="gradientToggle" class="control-label control-group-l">ENABLE GRADIENT</label>
-                            <label for="gradientToggle" class="toggle-switch">
-                                <input id="gradientToggle" type="checkbox" class="toggle-switch-input">
-                                <span class="toggle-switch-control"></span>
-                            </label>
-                        </div>
-                    </div>
-                    
-                    <div class="content-heading">>> GRADIENT DIRECTION CONTROL</div>
-                    <div class="row control-group">
-                        <label for="gradientAngle" class="control-label control-group-s">ANGLE (DEG)</label>
-                        <input id="gradientAngle" class="control-range control-group-l" type="range" step="5" min="0" max="360"
-                            value="90">
-                    </div>
-                    <p class="hint">Adjusts the angle of the **superior** gradient text. Requires *ENABLE GRADIENT* to function.</p>
-                </div>
+                <summary>YUNA'S THEME MATRIX OVERRIDE</summary>
+                <select id="theme-selector">
+                    <option value="retro-matrix">Retro Matrix (Green/Cyan)</option>
+                    <option value="firewall-breach">Firewall Breach (Red/Amber)</option>
+                    <option value="vaporwave">Vaporwave (Pink/Purple)</option>
+                    <option value="hacker-blue">Hacker Blue (Blue/Cyan)</option>
+                    <option value="neon-spectra">-- GRADIENT: Neon Spectra --</option>
+                    <option value="lava-flow">-- GRADIENT: Lava Flow --</option>
+                </select>
             </details>
         </div>
 
         <section class="upload content">
-            <div class="content-heading">>> INPUT SOURCE ACQUISITION</div>
+            <div class="content-heading gradient-target">>> INPUT SOURCE ACQUISITION</div>
             <div class="upload-preview">
                 <label class="drop-area preview-image-container" id="dropArea" for="uploadFile">
                     <div class="drop-area-input">
@@ -336,15 +390,15 @@
                         <img width="112" height="112" class="drop-area-preview preview-image" src="index.html" id="uploadPreview">
                         
                         <div class="drop-area-upload-text">
-                            <label id="uploadFileName" class="drop-area-upload-filename">CLICK/DRAG/DROP DATA</label>
+                            <label id="uploadFileName" class="drop-area-upload-filename gradient-target">CLICK/DRAG/DROP DATA</label>
                         </div>
                     </div>
                 </label>
                 
                 <details>
-                    <summary>REMOTE ACCESS</summary>
+                    <summary class="gradient-target">REMOTE ACCESS</summary>
                     <div class="content-body">
-                        <div class="content-heading">>> REMOTE URI INPUT</div>
+                        <div class="content-heading gradient-target">>> REMOTE URI INPUT</div>
                         <div class="row control-group">
                             <input class="control control-group-l control-has-icon control-grouped-left" type="url" required
                                 placeholder="Paste remote data URI (URL)" id="uploadUrl">
@@ -359,7 +413,7 @@
         </section>
 
         <section class="preview content">
-            <div class="content-heading">>> SYNTHESIS PREVIEW MATRIX</div>
+            <div class="content-heading gradient-target">>> SYNTHESIS PREVIEW MATRIX</div>
             <div class="preview-canvas">
                 <canvas height="112" width="112" id="canvas" class="canvas" tabindex="1"></canvas>
                 <div class="preview-playback">
@@ -377,9 +431,9 @@
             </div>
 
             <details>
-                <summary>IMAGE/HAND ADJUSTMENT CONTROLS</summary>
+                <summary class="gradient-target">IMAGE/HAND ADJUSTMENT CONTROLS</summary>
                 <div class="preview-controls">
-                    <div class="content-heading">>> HAND/PETTING SUBROUTINE</div>
+                    <div class="content-heading gradient-target">>> HAND/PETTING SUBROUTINE</div>
                     <div class="row control-group">
                         <label for="handScale" class="control-label control-group-s">HAND SCALE</label>
                         <input id="handScale" class="control-range control-group-l" type="range" step="1" min="50" max="300"
@@ -391,7 +445,7 @@
                             value="0">
                     </div>
                     
-                    <div class="content-heading">>> ADVANCED IMAGE ADJUSTMENT</div>
+                    <div class="content-heading gradient-target">>> ADVANCED IMAGE ADJUSTMENT</div>
                     <div class="row">
                         <div class="control-group">
                             <label for="toggleAdjust" class="control-label control-group-l">MANUAL OVERRIDE</label>
@@ -420,8 +474,7 @@
                     </div>
                 </div>
             </details>
-            
-            <div class="content-heading">>> FRAME SYNCHRONIZATION</div>
+            <div class="content-heading gradient-target">>> FRAME SYNCHRONIZATION</div>
             <div class="row control-group">
                 <label for="fps" class="control-label control-group-s">FRAME RATE (Hz)</label>
                 <input id="fps" class="control-range" type="range" step="2" min="2" max="60" value="16">
@@ -438,7 +491,7 @@
         </section>
 
         <section class="output content" id="outputSection">
-            <div class="content-heading">>> FINAL DATA CONSOLIDATION</div>
+            <div class="content-heading gradient-target">>> FINAL DATA CONSOLIDATION</div>
             <figure class="preview-image-container">
                 <img width="112" height="112" class="preview-image" id="result">
                 <div class="help output-info" id="info">Waiting for data stream...</div>
@@ -448,7 +501,7 @@
             </figure>
             
             <details>
-                <summary>DATA RETENTION & INTEGRITY REPORT</summary>
+                <summary class="gradient-target">DATA RETENTION & INTEGRITY REPORT</summary>
                 <div class="content-body">
                     <p class="help">
                         <strong>WARNING</strong>: Data is temporary. Download it, or lose it. We won't remind you twice.
@@ -456,7 +509,7 @@
                     <p class="help">If green appears: It's your browser. We are perfect.</p>
                 </div>
             </details>
-        </section>
+            </section>
 
         <footer class="footer help">
             <div>
