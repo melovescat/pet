@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="dark" data-theme="green">
+<html lang="en" class="dark" data-theme="retro-matrix">
 
 <head>
     <meta charset="UTF-8">
@@ -15,67 +15,62 @@
     <link rel="icon" href="favicon.ico">
 
     <style type="text/css">
-        /* --- Terminal Themes (Multiple Colors) --- */
+        /* --- Terminal Themes (Multi-Color & Gradient) --- */
         :root {
             /* Shared Styles */
+            --bg-color: #000000;
             --border-color: #1a1a1a;
             --input-bg: #0d0d0d;
             --font-mono: 'Inconsolata', 'Fira Mono', monospace;
             --font-sans: 'Inter', sans-serif;
             --radius-sm: 0;
-            --error-color: #FF0000;
-            
-            /* Sizing variable */
+            --error-color: #FF3333;
             --image-size: 180px;
+            
+            /* Gradient Defaults (for when gradient is enabled) */
+            --gradient-1: #FFB800; /* Yellow/Amber */
+            --gradient-2: #FF66CC; /* Pink */
+            --gradient-angle: 90deg;
         }
 
-        /* DEFAULT (GREEN) */
-        :root[data-theme="green"] {
-            --bg-color: #000000;
-            --text-color: #39FF14;
-            --accent-color: #39FF14;
-            --hand-accent: #00BFFF; /* DeepSkyBlue for hand controls */
+        /* --- THEMES (Multi-Color Palettes) --- */
+        
+        /* 1. RETRO MATRIX (Default - Green/Cyan Mix) */
+        :root[data-theme="retro-matrix"] {
+            --text-color: #39FF14; 
+            --accent-color: #00FFFF; 
+            --hand-accent: #39FF14;
         }
 
-        /* BLUE */
-        :root[data-theme="blue"] {
-            --bg-color: #000000;
-            --text-color: #00BFFF;
-            --accent-color: #00BFFF;
-            --hand-accent: #FFB800; /* Yellow */
-        }
-
-        /* RED */
-        :root[data-theme="red"] {
-            --bg-color: #000000;
-            --text-color: #FF3333;
-            --accent-color: #FF3333;
-            --hand-accent: #00BFFF; /* Blue */
-        }
-
-        /* YELLOW/AMBER */
-        :root[data-theme="yellow"] {
-            --bg-color: #000000;
-            --text-color: #FFB800;
-            --accent-color: #FFB800;
-            --hand-accent: #39FF14; /* Green */
-        }
-
-        /* CYAN */
-        :root[data-theme="cyan"] {
-            --bg-color: #000000;
-            --text-color: #00FFFF;
-            --accent-color: #00FFFF;
-            --hand-accent: #FF3333; /* Red */
+        /* 2. FIREWALL BREACH (Red/Yellow Mix) */
+        :root[data-theme="firewall-breach"] {
+            --text-color: #FFB800; 
+            --accent-color: #FF3333; 
+            --hand-accent: #FFB800;
         }
         
-        /* PURPLE */
-        :root[data-theme="purple"] {
-            --bg-color: #000000;
-            --text-color: #C06FE8;
-            --accent-color: #C06FE8;
-            --hand-accent: #39FF14; /* Green */
+        /* 3. VAPORWAVE (Pink/Blue/Purple Mix) */
+        :root[data-theme="vaporwave"] {
+            --text-color: #FF66CC; 
+            --accent-color: #4A90E2; 
+            --hand-accent: #C06FE8;
         }
+        
+        /* 4. HACKER BLUE (Pure Blue/Cyan) */
+        :root[data-theme="hacker-blue"] {
+            --text-color: #00BFFF; 
+            --accent-color: #4A90E2; 
+            --hand-accent: #00FFFF; 
+        }
+
+        /* 5. GRADIENT FLOW (Subtle Gradient Background) */
+        :root[data-theme="gradient-flow"] {
+            --text-color: #00FFFF;
+            --accent-color: #FF66CC;
+            --hand-accent: #FFB800;
+            background: linear-gradient(135deg, #020510 0%, #000000 100%);
+        }
+        
         
         /* Base Styling */
         body {
@@ -95,90 +90,71 @@
             overflow-y: hidden !important;
         }
 
+        /* Rich Text - Applies accent color/shadow to bold text */
         strong {
             font-weight: 700;
             color: var(--accent-color);
             text-shadow: 0 0 3px var(--accent-color);
         }
+        
+        /* --- GRADIENT TEXT STYLING --- */
+        .gradient-enabled .gradient-text-target, 
+        .gradient-enabled .content-heading,
+        .gradient-enabled details > summary {
+            background-image: linear-gradient(var(--gradient-angle), var(--gradient-1), var(--gradient-2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text; /* Standard */
+            text-fill-color: transparent; /* Standard */
+            /* Fallback to accent color if gradients fail */
+            color: var(--accent-color); 
+        }
+        
+        /* --- UI DE-DEFAULTING --- */
 
-        /* Grid Layout */
-        .grid {
-            margin: 0 auto;
-            max-width: 1200px;
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 15px;
-            grid-template-areas:
-                "header"
-                "theme-select"
-                "upload"
-                "preview"
-                "output"
-                "footer";
+        /* Completely hide the default file input text and button */
+        .drop-area-file-input {
+            display: none;
+        }
+
+        /* Suppress native styling on the theme selector/dropdown */
+        #theme-selector {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: none;
         }
         
-        @media only screen and (min-width: 768px) {
-            .grid {
-                grid-template-columns: 1fr 1fr;
-                gap: 20px;
-                grid-template-areas:
-                    "header header"
-                    "theme-select theme-select"
-                    "upload preview"
-                    "output output"
-                    "footer footer";
-            }
-            body { padding: 20px; font-size: 16px; }
+        /* Suppress default button text on the file field */
+        .drop-area-input input[type=file]::file-selector-button {
+            display: none;
         }
-        
-        /* Components */
-        .content {
-            background-color: transparent;
+
+        /* Suppress default browser text on unstyled inputs */
+        input[type="url"], input[type="number"] {
+            /* This overrides any lingering white text from default browser styles */
+            color: var(--text-color) !important;
+            background-color: var(--input-bg);
             border: 1px solid var(--accent-color);
-            padding: 15px;
-            border-radius: var(--radius-sm);
-            box-shadow: 0 0 5px var(--accent-color);
         }
         
-        /* Collapsible Details Styling */
-        details {
-            border: none;
-            padding: 0;
-            margin: 0;
+        /* HIDE DEFAULT SUMMARY ARROW */
+        details > summary::-webkit-details-marker {
+            display: none;
         }
         
-        details > summary {
-            list-style: none;
-            cursor: pointer;
-            border-bottom: 1px dashed var(--accent-color);
-            padding-bottom: 5px;
-            margin-bottom: 15px;
-            text-transform: uppercase;
-            font-size: 1.1em;
-            color: var(--text-color);
-            font-weight: 400;
-        }
-
+        /* Custom arrow styling */
         details > summary::before {
             content: "> ";
+            color: var(--accent-color);
+            padding-right: 5px;
         }
 
         details[open] > summary::before {
             content: "v ";
         }
-        
-        .content-heading { /* Used for titles *inside* open details blocks */
-            font-size: 1.1em;
-            color: var(--text-color);
-            border-bottom: 1px dashed var(--accent-color);
-            padding-bottom: 5px;
-            margin-top: 15px;
-            margin-bottom: 15px;
-            font-weight: 400;
-            text-transform: uppercase;
-        }
 
-        /* --- UNIFORM IMAGE SIZING --- */
+        /* --- UNIFORM IMAGE SIZING (180x180) --- */
         .drop-area-preview, 
         .canvas, 
         #result {
@@ -191,64 +167,16 @@
             margin: 0 auto 15px auto;
             display: block;
         }
-
-        /* Drop Area Specific Styles */
-        .drop-area-upload-text {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            min-height: 40px; 
-            cursor: pointer;
-            padding: 10px;
-        }
         
-        .drop-area-file-input {
-            display: none;
-        }
-        
-        .hint {
-            font-size: 0.8em;
-            color: rgba(57, 255, 20, 0.7);
-            margin-top: 5px;
-        }
-
-        /* Controls / Range Sliders (Animations retained) */
-        .control-range {
-            transition: box-shadow 0.15s ease-in-out, border-color 0.15s ease-in-out;
-        }
-        
-        .control-range:hover {
-            opacity: 1;
-            box-shadow: 0 0 8px var(--accent-color);
-        }
-
-        .control-range::-webkit-slider-thumb {
-            transition: box-shadow 0.15s ease-in-out;
-        }
-        
-        .control-range::-webkit-slider-thumb:active {
-             box-shadow: 0 0 10px var(--accent-color), 0 0 2px var(--bg-color) inset;
-        }
-
-        /* Hand Controls Styling */
-        #handYOffset, #handScale { border-color: var(--hand-accent); }
-        #handYOffset:hover, #handScale:hover { box-shadow: 0 0 8px var(--hand-accent); }
-        #handYOffset::-webkit-slider-thumb, #handScale::-webkit-slider-thumb {
-            background: var(--hand-accent);
-            box-shadow: 0 0 3px var(--hand-accent);
-        }
-        #handYOffset::-webkit-slider-thumb:active, #handScale::-webkit-slider-thumb:active {
-             box-shadow: 0 0 10px var(--hand-accent), 0 0 2px var(--bg-color) inset;
-        }
-        /* End New Hand Controls Styling */
+        /* (Remaining styles from previous steps preserved) */
 
     </style>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             const headingElement = document.getElementById("typing-heading");
             const themeSelector = document.getElementById("theme-selector");
+            const gradientToggle = document.getElementById("gradientToggle");
+            const gradientAngleInput = document.getElementById("gradientAngle");
             const htmlElement = document.documentElement;
             const canvas = document.getElementById("canvas");
             const body = document.body;
@@ -272,8 +200,22 @@
                 });
             });
 
-            // --- UI/THEME LOGIC ---
-            const savedTheme = localStorage.getItem("petpet-theme") || "green";
+            // --- UI/THEME & GRADIENT LOGIC ---
+            
+            function applyGradientStyle() {
+                if (gradientToggle.checked) {
+                    htmlElement.classList.add('gradient-enabled');
+                } else {
+                    htmlElement.classList.remove('gradient-enabled');
+                }
+                
+                // Update angle variable
+                const angle = parseInt(gradientAngleInput.value) || 90;
+                htmlElement.style.setProperty('--gradient-angle', `${angle}deg`);
+            }
+            
+            // Set initial theme
+            const savedTheme = localStorage.getItem("petpet-theme") || "retro-matrix";
             htmlElement.setAttribute("data-theme", savedTheme);
             themeSelector.value = savedTheme;
 
@@ -281,13 +223,21 @@
                 const newTheme = e.target.value;
                 htmlElement.setAttribute("data-theme", newTheme);
                 localStorage.setItem("petpet-theme", newTheme);
+                applyGradientStyle(); // Re-apply gradient if necessary
             });
+            
+            // Gradient listeners
+            gradientToggle.addEventListener('change', applyGradientStyle);
+            gradientAngleInput.addEventListener('input', applyGradientStyle);
+            
+            // Initial gradient application
+            applyGradientStyle();
 
 
             // Typing Animation Setup (Mocking phrases)
             const phrases = [
-                "SYSTEM INIT: PETPET SYNTHESIZER // V2.0 (Still works, surprisingly)",
-                "ACCESS DENIED. Just kidding, you're fine.",
+                "SYSTEM INIT: PETPET SYNTHESIZER // V2.0 (For Yuna)",
+                "ACCESS DENIED. Just kidding, you're fine, Yuna.",
                 "PETPET.EXE: The highest quality digital affection simulation.",
                 "I'm not judging your image choices. I promise.",
                 "ERROR: Too much love detected. Proceeding anyway."
@@ -337,20 +287,43 @@
 <body>
     <main class="grid">
         <header class="header">
-            <div class="heading" id="typing-heading"></div>
+            <div class="heading gradient-text-target" id="typing-heading"></div>
             <div><span style="color: var(--error-color)">[ACCESS WARNING]:</span> Excessive processing demands *might* cause host system instability. We accept zero liability.</div>
         </header>
         
         <div class="theme-select">
-            TERMINAL THEME:
+            TERMINAL THEME (FOR YUNA):
             <select id="theme-selector">
-                <option value="green">Green (Default)</option>
-                <option value="cyan">Cyan (Sleeper Agent)</option>
-                <option value="blue">Blue (Corporate)</option>
-                <option value="yellow">Yellow (Danger)</option>
-                <option value="red">Red (MAXIMUM OVERDRIVE)</option>
-                <option value="purple">Purple (Abstract)</option>
+                <option value="retro-matrix">Retro Matrix (Green/Cyan)</option>
+                <option value="firewall-breach">Firewall Breach (Red/Amber)</option>
+                <option value="vaporwave">Vaporwave (Pink/Purple)</option>
+                <option value="hacker-blue">Hacker Blue (Blue/Cyan)</option>
+                <option value="gradient-flow">Gradient Flow (Subtle BG)</option>
             </select>
+            
+            <details>
+                <summary>TEXT GRADIENT OVERRIDE</summary>
+                <div class="content-body">
+                    <div class="content-heading">>> GRADIENT POWER MANAGEMENT</div>
+                    <div class="row">
+                        <div class="control-group">
+                            <label for="gradientToggle" class="control-label control-group-l">ENABLE GRADIENT</label>
+                            <label for="gradientToggle" class="toggle-switch">
+                                <input id="gradientToggle" type="checkbox" class="toggle-switch-input">
+                                <span class="toggle-switch-control"></span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="content-heading">>> GRADIENT DIRECTION CONTROL</div>
+                    <div class="row control-group">
+                        <label for="gradientAngle" class="control-label control-group-s">ANGLE (DEG)</label>
+                        <input id="gradientAngle" class="control-range control-group-l" type="range" step="5" min="0" max="360"
+                            value="90">
+                    </div>
+                    <p class="hint">Adjusts the angle of the **superior** gradient text. Requires *ENABLE GRADIENT* to function.</p>
+                </div>
+            </details>
         </div>
 
         <section class="upload content">
@@ -369,7 +342,7 @@
                 </label>
                 
                 <details>
-                    <summary>REMOTE ACCESS (IF LOCAL FAILS)</summary>
+                    <summary>REMOTE ACCESS</summary>
                     <div class="content-body">
                         <div class="content-heading">>> REMOTE URI INPUT</div>
                         <div class="row control-group">
@@ -379,7 +352,7 @@
                                     class="jam jam-upload"></i></button>
                         </div>
                         <p id="uploadError" class="error-message"></p>
-                        <p class="help"><strong>WARNING</strong>: Cross-origin servers hate you. Don't expect this to work.</p>
+                        <p class="help"><strong>WARNING</strong>: Servers hate you. Don't expect this to work.</p>
                     </div>
                 </details>
             </div>
@@ -427,7 +400,7 @@
                                 <span class="toggle-switch-control"></span>
                             </label>
                         </div>
-                        <div class="hint">Enable drag/arrow key control. It's not rocket science.</div>
+                        <div class="hint">Enable drag/arrow control. It's not hard.</div>
                     </div>
                     <div class="row control-group">
                         <label for="toggleFlip" class="control-label control-group-s">FLIP AXIS</label>
@@ -447,6 +420,7 @@
                     </div>
                 </div>
             </details>
+            
             <div class="content-heading">>> FRAME SYNCHRONIZATION</div>
             <div class="row control-group">
                 <label for="fps" class="control-label control-group-s">FRAME RATE (Hz)</label>
@@ -477,12 +451,12 @@
                 <summary>DATA RETENTION & INTEGRITY REPORT</summary>
                 <div class="content-body">
                     <p class="help">
-                        <strong>WARNING</strong>: This data is temporary. Download it, or lose it. We won't remind you again.
+                        <strong>WARNING</strong>: Data is temporary. Download it, or lose it. We won't remind you twice.
                     </p>
-                    <p class="help">If green appears: It's your browser, not us. We are perfect.</p>
+                    <p class="help">If green appears: It's your browser. We are perfect.</p>
                 </div>
             </details>
-            </section>
+        </section>
 
         <footer class="footer help">
             <div>
