@@ -31,13 +31,15 @@
             --bg-color: #000000;
             --text-color: #39FF14;
             --accent-color: #39FF14;
+            --hand-accent: #00BFFF; /* DeepSkyBlue for hand controls */
         }
 
         /* BLUE */
         :root[data-theme="blue"] {
             --bg-color: #000000;
-            --text-color: #00BFFF; /* DeepSkyBlue */
+            --text-color: #00BFFF;
             --accent-color: #00BFFF;
+            --hand-accent: #FFB800; /* Yellow */
         }
 
         /* RED */
@@ -45,6 +47,7 @@
             --bg-color: #000000;
             --text-color: #FF3333;
             --accent-color: #FF3333;
+            --hand-accent: #00BFFF; /* Blue */
         }
 
         /* YELLOW/AMBER */
@@ -52,6 +55,7 @@
             --bg-color: #000000;
             --text-color: #FFB800;
             --accent-color: #FFB800;
+            --hand-accent: #39FF14; /* Green */
         }
 
         /* CYAN */
@@ -59,6 +63,7 @@
             --bg-color: #000000;
             --text-color: #00FFFF;
             --accent-color: #00FFFF;
+            --hand-accent: #FF3333; /* Red */
         }
         
         /* PURPLE */
@@ -66,6 +71,7 @@
             --bg-color: #000000;
             --text-color: #C06FE8;
             --accent-color: #C06FE8;
+            --hand-accent: #39FF14; /* Green */
         }
         
         /* Base Styling */
@@ -75,10 +81,10 @@
             font-family: var(--font-mono);
             line-height: 1.6;
             margin: 0;
-            padding: 10px; /* Reduced padding for mobile */
+            padding: 10px;
             text-shadow: 0 0 1px var(--text-color);
             box-shadow: inset 0 0 10px rgba(57, 255, 20, 0.4);
-            font-size: 14px; /* Slightly smaller base font for mobile */
+            font-size: 14px;
         }
 
         /* Rich Text / Bold Styling */
@@ -93,8 +99,8 @@
             margin: 0 auto;
             max-width: 1200px;
             display: grid;
-            grid-template-columns: 1fr; /* Default to single column for mobile */
-            gap: 15px; /* Reduced gap */
+            grid-template-columns: 1fr;
+            gap: 15px;
             grid-template-areas:
                 "header"
                 "theme-select"
@@ -123,7 +129,7 @@
         .content {
             background-color: transparent;
             border: 1px solid var(--accent-color);
-            padding: 15px; /* Reduced padding */
+            padding: 15px;
             border-radius: var(--radius-sm);
             box-shadow: 0 0 5px var(--accent-color);
         }
@@ -133,26 +139,27 @@
             text-align: left;
             padding: 5px 0;
         }
-
-        .theme-select {
-            grid-area: theme-select;
-            text-align: right;
-            font-size: 0.9em;
-        }
         
+        /* Mobile Header Fix: Allow dynamic heading to wrap, preventing horizontal overflow */
         .heading {
             font-family: var(--font-mono);
-            font-size: 1.6em; /* Slightly smaller for mobile */
+            font-size: 1.6em;
             font-weight: 400;
             color: var(--text-color);
             text-shadow: 0 0 5px var(--text-color);
-            height: 1.2em;
-            white-space: nowrap;
-            overflow: hidden;
-            display: inline-block;
+            height: auto; /* Allow height to adjust */
+            white-space: normal; /* Allow text to wrap */
+            overflow: visible;
+            display: block; /* Use block to occupy space and allow wrapping */
+            width: 100%; /* Important for text-wrapping to function correctly */
         }
         @media only screen and (min-width: 768px) {
-            .heading { font-size: 1.8em; }
+            .heading { 
+                font-size: 1.8em;
+                white-space: nowrap; /* Prevent wrap on desktop */
+                width: auto;
+                display: inline-block;
+            }
         }
 
 
@@ -166,75 +173,26 @@
             text-transform: uppercase;
         }
 
-        .upload { grid-area: upload; }
-        .preview { grid-area: preview; }
-        .output { grid-area: output; }
-        .footer {
-            grid-area: footer;
-            text-align: center;
-            padding: 10px 0;
-            font-size: 0.8em;
-            border-top: 1px dashed var(--accent-color);
-            margin-top: 15px;
-            color: rgba(57, 255, 20, 0.7);
-        }
-        
-        /* Preview/Canvas & Output */
-        .preview-canvas, .preview-image-container {
-            text-align: center;
-        }
-
-        .canvas, #result {
-            width: 100%;
-            max-width: 250px; /* Constrained on wider screens */
-            height: auto;
-            border: 2px solid var(--accent-color);
-            box-shadow: 0 0 10px var(--accent-color);
-            background-color: #0d0d0d;
-            margin: 0 auto;
-            display: block;
-        }
-        
-        .preview-image {
-            image-rendering: pixelated;
-        }
-
-        /* Controls */
-        .row {
-            margin-bottom: 10px;
+        /* Drop Area Specific Styles */
+        .drop-area-upload-text {
             display: flex;
-            flex-direction: column; /* Stack controls vertically on mobile */
-            align-items: flex-start;
-            justify-content: space-between;
-        }
-        
-        .row.export-row {
-            flex-direction: row; /* Keep action buttons side-by-side */
-            margin-top: 15px;
-        }
-        
-        @media only screen and (min-width: 500px) {
-            .row:not(.export-row) {
-                flex-direction: row; /* Two columns above a certain size */
-                align-items: center;
-            }
-        }
-        
-        .control-group {
-            display: flex;
+            flex-direction: column;
             align-items: center;
-            width: 100%; /* Full width for control group */
-            margin-bottom: 5px; /* Spacing between label and input on mobile */
-        }
-
-        .control-label {
-            margin-right: 10px;
-            text-transform: uppercase;
-            font-size: 0.9em;
-            min-width: 100px; /* Ensure labels don't get too cramped */
-            color: var(--text-color);
+            justify-content: center;
+            text-align: center;
+            min-height: 100px; 
+            cursor: pointer; /* Indicate it's clickable */
+            padding: 10px;
         }
         
+        /* Hide the file input entirely, as the label now handles the click */
+        .drop-area-file-input {
+            display: none;
+        }
+        
+        /* Controls */
+        /* ... (other control styles remain) ... */
+
         .control-range {
             -webkit-appearance: none;
             width: 100%;
@@ -242,10 +200,55 @@
             background: #0d0d0d;
             outline: none;
             opacity: 0.8;
-            transition: opacity .15s;
             border: 1px solid var(--accent-color);
+            
+            /* ADDED ANIMATION: Shadow glow on interaction */
+            transition: box-shadow 0.15s ease-in-out, border-color 0.15s ease-in-out;
         }
         
+        .control-range:hover {
+            opacity: 1;
+            box-shadow: 0 0 8px var(--accent-color);
+        }
+
+        .control-range::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 0;
+            background: var(--accent-color);
+            cursor: pointer;
+            box-shadow: 0 0 3px var(--accent-color);
+
+            /* ADDED ANIMATION: Larger/stronger shadow on active drag */
+            transition: box-shadow 0.15s ease-in-out;
+        }
+        
+        .control-range::-webkit-slider-thumb:active {
+             box-shadow: 0 0 10px var(--accent-color), 0 0 2px var(--bg-color) inset;
+        }
+
+        /* Hand Controls Styling - Now uses a themed --hand-accent variable */
+        #handYOffset, #handScale {
+            border-color: var(--hand-accent);
+        }
+        
+        #handYOffset:hover, #handScale:hover {
+            box-shadow: 0 0 8px var(--hand-accent);
+        }
+
+        #handYOffset::-webkit-slider-thumb, #handScale::-webkit-slider-thumb {
+            background: var(--hand-accent);
+            box-shadow: 0 0 3px var(--hand-accent);
+        }
+        
+        #handYOffset::-webkit-slider-thumb:active, #handScale::-webkit-slider-thumb:active {
+             box-shadow: 0 0 10px var(--hand-accent), 0 0 2px var(--bg-color) inset;
+        }
+        /* End New Hand Controls Styling */
+
+
         /* Buttons, Inputs, etc. (Styles remain consistent) */
         
         .btn {
@@ -279,20 +282,16 @@
             padding: 5px;
             font-family: var(--font-mono);
         }
-        
-        /* Drop Area Specific Styles */
-        .drop-area-upload-text {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            min-height: 100px; /* Ensure the click target is large */
+
+        /* Mock Terminal Cursor/Blinking Effect for dynamic typing */
+        .typing-cursor {
+            border-right: 0.1em solid var(--text-color);
+            animation: blink 0.7s step-end infinite;
         }
-        
-        /* Hide the file input entirely, as the label now handles the click */
-        .drop-area-file-input {
-            display: none;
+
+        @keyframes blink {
+            from, to { border-color: transparent }
+            50% { border-color: var(--text-color) }
         }
 
     </style>
@@ -395,7 +394,9 @@
                 <label class="drop-area preview-image-container" id="dropArea" for="uploadFile">
                     <div class="drop-area-input">
                         <input class="drop-area-file-input" type="file" id="uploadFile" accept="image/*">
+                        
                         <img class="drop-area-preview preview-image" src="index.html" id="uploadPreview">
+                        
                         <div class="drop-area-upload-text">
                             <label id="uploadFileName" class="drop-area-upload-filename">Click, Drag, or Drop Your Binary Payload</label>
                             <p class="hint">(Image preview is located directly above this text block. Yes, this is counter-intuitive.)</p>
