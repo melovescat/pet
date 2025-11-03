@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+    <meta name="description" content="petpet generator - Synthesize high-fidelity digital affection.">
+    <meta name="theme-color" content="#4A90E2">
+    <meta property="og:title" content="Petpet Synthesizer // v2.0">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://benisland.neocities.org/petpet/">
+    <meta property="og:image" itemprop="image" content="https://benisland.neocities.org/petpet/img/pet.png">
+    <meta property="og:description" itemprop="description" content="High-fidelity petpet GIF generation matrix.">
+    <title>Petpet Synthesizer // v2.0</title>
+    <link rel="icon" href="favicon.ico">
+
+    <style type="text/css">
+        :root {
+            /* Authentic Terminal Theme */
+            --bg-color: #000000; /* Pure Black */
+            --text-color: #39FF14; /* Neon Green */
+            --accent-color: #39FF14; /* Everything is green */
+            --border-color: #1a1a1a;
+            --terminal-green: #39FF14; 
+            --input-bg: #0d0d0d;
+            --font-mono: 'Inconsolata', 'Fira Mono', monospace; /* More terminal-appropriate fonts */
+            --font-sans: 'Inter', sans-serif;
+            --radius-sm: 0; /* Pure terminal look, no rounding */
+            --error-color: #FF0000; /* Red for errors */
+        }
+
+        /* Basic Reset and Terminal-like appearance */
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-mono);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            /* Terminal scanlines effect - optional but cool */
+            /* background-image: linear-gradient(rgba(0, 0, 0, 0) 50%, rgba(0, 255, 0, 0.08) 50%);
+            background-size: 100% 4px; */
+            text-shadow: 0 0 1px var(--text-color);
+            box-shadow: inset 0 0 10px rgba(57, 255, 20, 0.4);
+        }
+
+        /* Utility classes from original CSS are retained for functionality */
+        .grid {
+            margin: 0 auto;
+            max-width: 1200px;
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* Two main columns */
+            gap: 20px;
+            grid-template-areas:
+                "header header"
+                "upload preview"
+                "upload preview"
+                "output output"
+                "footer footer";
+        }
+
+        @media only screen and (max-width: 768px) {
+            .grid {
+                grid-template-columns: 100%;
+                grid-template-areas:
+                    "header"
+                    "upload"
+                    "preview"
+                    "output"
+                    "footer";
+            }
+        }
+        
+        /* Components */
+        .content {
+            background-color: transparent; /* Seamless terminal background */
+            border: 1px solid var(--accent-color); /* Neon green border */
+            padding: 20px;
+            border-radius: var(--radius-sm);
+            box-shadow: 0 0 5px var(--accent-color); /* Light glow */
+        }
+
+        .header {
+            grid-area: header;
+            text-align: left;
+            padding: 10px 0;
+            margin-bottom: 20px;
+        }
+
+        .heading {
+            font-family: var(--font-mono);
+            font-size: 1.8em;
+            font-weight: 400;
+            color: var(--text-color);
+            text-shadow: 0 0 5px var(--text-color);
+            height: 1.2em; /* Fix height for dynamic content */
+            white-space: nowrap;
+            overflow: hidden;
+            display: inline-block;
+        }
+
+        .content-heading {
+            font-size: 1.2em;
+            color: var(--text-color);
+            border-bottom: 1px dashed var(--accent-color);
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+            font-weight: 400;
+            text-transform: uppercase;
+        }
+
+        .upload { grid-area: upload; }
+        .preview { grid-area: preview; }
+        .output { grid-area: output; }
+        .footer {
+            grid-area: footer;
+            text-align: center;
+            padding: 20px 0;
+            font-size: 0.8em;
+            border-top: 1px dashed var(--accent-color);
+            margin-top: 20px;
+            color: rgba(57, 255, 20, 0.7); /* Dimmer green */
+        }
+
+        /* Preview/Canvas */
+        .preview-canvas {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .canvas {
+            /* Larger preview canvas */
+            width: 250px; 
+            height: 250px; 
+            border: 2px solid var(--accent-color);
+            box-shadow: 0 0 10px var(--accent-color);
+            background-color: #0d0d0d;
+        }
+        
+        .preview-image-container {
+            display: block;
+            text-align: center;
+        }
+        
+        .preview-image {
+            max-width: 100%;
+            height: auto;
+            image-rendering: pixelated;
+        }
+        
+        #result {
+            /* Larger output GIF display */
+            width: 250px; 
+            height: 250px; 
+            border: 2px solid var(--terminal-green);
+            box-shadow: 0 0 10px var(--terminal-green);
+        }
+
+        /* Controls */
+        .row {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .control-group {
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
+        }
+
+        .control-label {
+            margin-right: 10px;
+            text-transform: uppercase;
+            font-size: 0.9em;
+            min-width: 50px;
+            color: var(--text-color);
+        }
+        
+        .control-range {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 4px;
+            background: #0d0d0d;
+            outline: none;
+            opacity: 0.8;
+            transition: opacity .15s;
+            border: 1px solid var(--accent-color);
+        }
+
+        .control-range::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 0; /* Square sliders */
+            background: var(--accent-color);
+            cursor: pointer;
+            box-shadow: 0 0 3px var(--accent-color);
+        }
+        
+        .control-sm {
+            background-color: var(--input-bg);
+            border: 1px solid var(--accent-color);
+            color: var(--text-color);
+            padding: 5px;
+            font-family: var(--font-mono);
+            margin-left: 5px;
+            width: 60px;
+            text-align: center;
+        }
+
+        #fpsVal {
+            width: 50px;
+            text-align: center;
+            margin-left: 10px;
+            color: var(--terminal-green);
+            border-color: var(--terminal-green);
+        }
+        
+        /* New Hand Controls Styling */
+        #handYOffset, #handScale {
+            /* Using a different border/thumb color for hand controls for visual separation */
+            border-color: #00BFFF; /* Deep sky blue */
+        }
+        #handYOffset::-webkit-slider-thumb, #handScale::-webkit-slider-thumb {
+            background: #00BFFF;
+            box-shadow: 0 0 3px #00BFFF;
+        }
+        #handYOffsetVal {
+             color: #00BFFF;
+             border-color: #00BFFF;
+        }
+        /* End New Hand Controls Styling */
+
+
+        /* Buttons */
+        .btn {
+            background-color: transparent;
+            color: var(--text-color);
+            border: 1px solid var(--accent-color);
+            padding: 8px 15px;
+            text-transform: uppercase;
+            font-weight: 400;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-radius: var(--radius-sm);
+        }
+
+        .btn:hover {
+            background-color: var(--accent-color);
+            color: var(--bg-color);
+            box-shadow: 0 0 5px var(--accent-color);
+        }
+
+        .btn-playback-playpause, .btn-playback-prev, .btn-playback-next {
+            background: transparent;
+            color: var(--accent-color);
+            border: 1px solid var(--accent-color);
+            padding: 10px;
+            margin: 0 2px;
+            text-shadow: none;
+        }
+        
+        .btn-playback-playpause:hover, .btn-playback-prev:hover, .btn-playback-next:hover {
+            background: var(--accent-color);
+            color: var(--bg-color);
+        }
+
+        .btn-export {
+            border-color: #39FF14;
+            color: #39FF14;
+        }
+        
+        .btn-export:hover {
+            background-color: #39FF14;
+            color: var(--bg-color);
+            box-shadow: 0 0 10px #39FF14;
+        }
+        
+        /* New Download Button Style (A subtle variation of export) */
+        .btn-download {
+            border-color: #7FFF00; /* Chartreuse */
+            color: #7FFF00;
+        }
+        .btn-download:hover {
+            background-color: #7FFF00;
+            color: var(--bg-color);
+            box-shadow: 0 0 10px #7FFF00;
+        }
+        /* End New Download Button Style */
+        
+        /* Checkbox/Toggle Switch */
+        .toggle-switch-control {
+            background-color: var(--border-color);
+            border: 1px solid var(--accent-color);
+        }
+
+        .toggle-switch-control:before {
+            background-color: var(--accent-color);
+            border-radius: 0;
+        }
+
+        .toggle-switch-input:checked + .toggle-switch-control {
+            background-color: var(--accent-color);
+        }
+
+        .toggle-switch-input:checked + .toggle-switch-control:before {
+            background-color: var(--bg-color);
+        }
+        
+        /* Upload/Drop Area */
+        .drop-area {
+            border: 2px dashed var(--accent-color);
+            padding: 30px;
+        }
+        
+        .drop-area-upload-btn {
+            background: transparent;
+            color: var(--accent-color);
+            border: 1px solid var(--accent-color);
+        }
+        
+        .drop-area-upload-filename {
+            color: var(--text-color);
+        }
+        
+        /* URL Input Group */
+        #uploadUrl {
+            background-color: var(--input-bg);
+            border: 1px solid var(--accent-color);
+            color: var(--text-color);
+            border-radius: var(--radius-sm);
+        }
+        
+        #uploadUrlBtn {
+            background: transparent;
+            color: var(--accent-color);
+            border: 1px solid var(--accent-color);
+            border-left: none;
+            padding: 10px;
+            border-radius: var(--radius-sm);
+        }
+        
+        .control-grouped-left {
+            border-right: none !important;
+        }
+        .control-grouped-center {
+            border-left: none !important;
+            border-right: none !important;
+        }
+        .control-grouped-right {
+            border-left: none !important;
+        }
+
+
+        /* Text Styles */
+        .help, .output-info {
+            font-size: 0.9em;
+            color: rgba(57, 255, 20, 0.7);
+        }
+
+        .hint {
+            font-size: 0.8em;
+            color: rgba(57, 255, 20, 0.7);
+        }
+
+        .error-message {
+            color: var(--error-color);
+            font-weight: 600;
+        }
+
+        a {
+            color: var(--accent-color);
+            text-decoration: underline;
+        }
+        
+        a:hover {
+            color: #6da7f7;
+        }
+
+        /* Mock Terminal Cursor/Blinking Effect for dynamic typing */
+        .typing-cursor {
+            border-right: 0.1em solid var(--text-color);
+            animation: blink 0.7s step-end infinite;
+        }
+
+        @keyframes blink {
+            from, to { border-color: transparent }
+            50% { border-color: var(--text-color) }
+        }
+
+    </style>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const headingElement = document.getElementById("typing-heading");
+            const phrases = [
+                "SYSTEM INIT: PETPET SYNTHESIZER // V2.0",
+                "SYSTEM NUH UH..",
+                "PETPET NOT TYPING REST",
+                "PETPET R U MAKING STICKERS? "
+            ];
+            let phraseIndex = 0;
+            let charIndex = 0;
+            let isDeleting = false;
+            let typingSpeed = 70;
+            const initialDelay = 1500;
+            const phraseChangeDelay = 500;
+
+            function type() {
+                const currentPhrase = phrases[phraseIndex];
+                
+                // Typing/Deleting logic
+                if (isDeleting) {
+                    headingElement.innerHTML = currentPhrase.substring(0, charIndex - 1) + '<span class="typing-cursor"></span>';
+                    charIndex--;
+                    typingSpeed = 30; // Faster delete
+                } else {
+                    headingElement.innerHTML = currentPhrase.substring(0, charIndex + 1) + '<span class="typing-cursor"></span>';
+                    charIndex++;
+                    typingSpeed = 70; // Standard type speed
+                }
+
+                if (!isDeleting && charIndex > currentPhrase.length) {
+                    // Phrase completed, wait and start deleting
+                    isDeleting = true;
+                    setTimeout(type, initialDelay);
+                    return;
+                } else if (isDeleting && charIndex <= 0) {
+                    // Deletion completed, move to next phrase
+                    isDeleting = false;
+                    phraseIndex = (phraseIndex + 1) % phrases.length;
+                    charIndex = 0; // Reset character index for next phrase
+                    typingSpeed = 150; // Pause briefly before typing
+                }
+
+                // Continue loop
+                setTimeout(type, typingSpeed);
+            }
+
+            // Start the animation
+            setTimeout(type, 100);
+
+            // Original theme toggle functionality retained (using the hidden input)
+            const theme = localStorage.getItem("theme") || (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+            document.documentElement.setAttribute("data-theme", theme);
+            document.querySelectorAll("a.e").forEach(x => { x.href = x.dataset.href }); 
+            const e = document.getElementById("color-theme");
+            e.checked = "dark" == theme;
+            e.addEventListener("change", t => { 
+                const newTheme = e.checked ? "dark" : "light";
+                document.documentElement.setAttribute("data-theme", newTheme); 
+                localStorage.setItem("theme", newTheme) 
+            });
+        });
+    </script>
+    <link href="https://unpkg.com/jam-icons/css/jam.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <main class="grid">
+        <header class="header">
+            <div class="heading" id="typing-heading"></div>
+            <div><span style="color: var(--error-color)">[ACCESS WARNING]:</span> Excessive processing demands may cause host system instability. We are not responsible.</div>
+        </header>
+
+        <section class="upload content">
+            <div class="content-heading">>> INPUT SOURCE ACQUISITION</div>
+            <div class="upload-preview">
+                <label class="drop-area preview-image-container" id="dropArea" for="uploadFile">
+                    <div class="drop-area-input">
+                        <input class="drop-area-file-input" type="file" id="uploadFile" accept="image/*">
+                        <img class="drop-area-preview preview-image" src="index.html" id="uploadPreview">
+                        <div class="drop-area-upload" for="uploadFile">
+                            <label for="uploadFile" class="drop-area-upload-btn btn">Upload Local Data</label>
+                            <label id="uploadFileName" class="drop-area-upload-filename">or Drag & Drop Binary Payload</label>
+                        </div>
+                    </div>
+                </label>
+                <div class="row control-group">
+                    <input class="control control-group-l control-has-icon control-grouped-left" type="url" required
+                        placeholder="Paste remote data URI (URL)" id="uploadUrl">
+                    <button type="submit" class="btn control-icon control-grouped-right" id="uploadUrlBtn"><i
+                            class="jam jam-upload"></i></button>
+                </div>
+                <p id="uploadError" class="error-message"></p>
+                <p class="help">**PROTOCOL ANOMALY**: External URL fetching may fail due to cross-origin server hostility. Try local upload if remote access is denied.</p>
+            </div>
+        </section>
+
+        <section class="preview content">
+            <div class="content-heading">>> SYNTHESIS PREVIEW MATRIX</div>
+            <div class="preview-canvas">
+                <canvas height="112" width="112" id="canvas" class="canvas" tabindex="1"></canvas>
+                <div class="preview-playback">
+                    <button id="prev" class="btn btn-playback-prev control-grouped-left">
+                        <i class="jam jam-set-backward"></i>
+                    </button>
+                    <button id="play" class="btn btn-playback-playpause control-grouped-center">
+                        <i class="jam jam-play btn-playback-play"></i>
+                        <i class="jam jam-pause btn-playback-pause"></i>
+                    </button>
+                    <button id="next" class="btn btn-playback-next control-grouped-right">
+                        <i class="jam jam-set-forward"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="preview-controls">
+                <div class="content-heading" style="margin-top: 20px;">>> HAND/PETTING SUBROUTINE ADJUSTMENT</div>
+                <div class="row control-group">
+                    <label for="handScale" class="control-label control-group-s">HAND SCALING</label>
+                    <input id="handScale" class="control-range control-group-l" type="range" step="1" min="50" max="300"
+                        value="100">
+                </div>
+                <div class="row control-group">
+                    <label for="handYOffset" class="control-label control-group-s">HAND Y-OFFSET</label>
+                    <input id="handYOffset" class="control-range control-group-l" type="range" step="1" min="-50" max="50"
+                        value="0">
+                </div>
+                <div class="content-heading" style="margin-top: 20px;">>> IMAGE SUBROUTINE ADJUSTMENT</div>
+                <div class="row">
+                    <div class="control-group">
+                        <label for="toggleAdjust" class="control-label control-group-l">POSITIONING INTERFACE</label>
+                        <label for="toggleAdjust" class="toggle-switch">
+                            <input id="toggleAdjust" type="checkbox" class="toggle-switch-input">
+                            <span class="toggle-switch-control"></span>
+                        </label>
+                    </div>
+                    <div class="hint">
+                        Enable **Manual Override** to translate image coordinates using pointer/keyboard. (Yes, even on mobile. Shocking, we know.)
+                        <a class="e" data-href="https://i.imgur.com/q0NE5rh.jpg" target="_blank"></a>
+                    </div>
+                </div>
+                <div class="row control-group">
+                    <label for="toggleFlip" class="control-label control-group-s">FLIP AXIS</label>
+                    <label for="toggleFlip" class="toggle-switch sm">
+                        <input id="toggleFlip" type="checkbox" class="toggle-switch-input">
+                        <span class="toggle-switch-control"></span>
+                    </label>
+                </div>
+                <div class="row control-group">
+                    <label for="scale" class="control-label control-group-s">SCALING FACTOR</label>
+                    <input id="scale" class="control-range control-group-l" type="range" step="1" min="15" max="200" value="85">
+                </div>
+                <div class="row control-group">
+                    <label for="squish" class="control-label control-group-s">COLLISION COMPRESSION</label>
+                    <input id="squish" class="control-range control-group-l" type="range" step="1" min="100" max="300"
+                        value="125">
+                </div>
+                <div class="row control-group">
+                    <label for="fps" class="control-label control-group-s">FRAME RATE (Hz)</label>
+                    <input id="fps" class="control-range" type="range" step="2" min="2" max="60" value="16">
+                    <input type="number" id="fpsVal" class="control control-sm" step="1" min="2" max="60" value="16">
+                </div>
+                <div class="row export-row">
+                    <div class="control-group">
+                        <button id="reset" class="btn btn-reset control-group-s">RESET CONFIG</button>
+                        <div class="spacer" style="width:0.382em"></div>
+                        <button id="export" class="btn btn-export control-group-l">EXECUTE GIF SYNTHESIS</button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="output content">
+            <div class="content-heading">>> FINAL DATA CONSOLIDATION</div>
+            <figure class="preview-image-container">
+                <img width="112" height="112" class="preview-image" id="result">
+                <div class="help output-info" id="info">Waiting for data stream...</div>
+                <button id="downloadGif" class="btn btn-download" disabled style="margin-top: 10px;">
+                    <i class="jam jam-download"></i> DOWNLOAD DATA FILE
+                </button>
+            </figure>
+            <p class="help">
+                <a data-href='https://i.imgur.com/hPUOCb1.jpg' target="_blank" class="e">NOTE:</a> The generated GIF is client-side data. **DOWNLOAD IMMEDIATELY** to prevent ephemeral data loss. The link will self-terminate upon browser refresh.
+            </p>
+            <p class="help">If residual green artifacts are detected, initiate browser-side cache purge (Try a different browser). Our algorithms are flawless.</p>
+        </section>
+
+        <footer class="footer help">
+            <div>
+                <a href="v1">LEGACY V1 INTERFACE</a>
+                <span class="separator">|</span>
+                RESOURCE TEMPLATES: <a href="img/template.gif" target="_blank">GIF</a>, <a href="img/sprite.png"
+                    target="_blank">SPRITE</a>
+                <span class="separator">|</span>
+                FRAMEWORK STATUS: Using **gif.js** for high-speed client-side image sequence encoding.
+            </div>
+            <br>
+            <a class="e fingies" id="fg" data-href="https://neocities.org/site/benisland" title="😳" target="_blank">
+                <span class="fl">👉</span><span>👈</span> (Source Code Interrogation)
+            </a>
+            <br>
+        </footer>
+    </main>
+
+    <script src="requestInterval.js"></script>
+    <script src="gif.js"></script>
+    <script src="main.js"></script>
+</body>
+
+</html>
