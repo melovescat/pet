@@ -419,7 +419,11 @@ const g = { ...DEFAULTS };
 
         gif.on("start", () => start(window.performance.now()));
         gif.on("progress", (p) => progress(p));
-        gif.on("finished", (blob) => finish(blob, window.performance.now()));
+        gif.on("finished", (blob, endTime) => {
+          finish(blob, endTime);
+          // NEW SCROLL LOGIC: Scroll to the download button after rendering is complete
+          document.getElementById('downloadGif').scrollIntoView({ behavior: 'smooth' });
+        });
         gif.render();
       },
     };
@@ -672,6 +676,8 @@ const g = { ...DEFAULTS };
         $exportBtn.disabled = false;
         $downloadBtn.disabled = false; // Enable download button
         $renderResult.src = URL.createObjectURL(blob);
+        // Scroll logic moved inside GifRenderer logic
+        // document.getElementById('downloadGif').scrollIntoView({ behavior: 'smooth' });
       }
     );
 
