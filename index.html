@@ -6,12 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
     <meta name="description" content="petpet generator - Synthesize high-fidelity digital affection.">
     <meta name="theme-color" content="#4A90E2">
-    <meta property="og:title" content="Petpet Synthesizer // v2.0">
+    <meta property="og:title" content="Petpet maker for Yuna <3">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://benisland.neocities.org/petpet/">
+    <meta property="og:url" content="https://melovescat.github.io/pet/">
     <meta property="og:image" itemprop="image" content="https://benisland.neocities.org/petpet/img/pet.png">
     <meta property="og:description" itemprop="description" content="High-fidelity petpet GIF generation matrix.">
-    <title>Petpet Synthesizer // v2.0</title>
+    <title>Petpet maker for Yuna <3</title>
     <link rel="icon" href="favicon.ico">
 
     <style type="text/css">
@@ -270,11 +270,11 @@
 
             // Typing Animation Setup
             const phrases = [
-                "SYSTEM INIT: PETPET SYNTHESIZER // V2.0 (Still works, surprisingly)",
-                "ACCESS DENIED. Just kidding, you're fine.",
-                "PETPET.EXE: The highest quality digital affection simulation.",
-                "I'm not judging your image choices. I promise.",
-                "ERROR: Too much love detected. Proceeding anyway."
+                "SYSTEM64 INIT: PETPET SYNTHESIZER // V2.0 ",
+                "ACCESS DENIED: TOO FOINE TO ENTER",
+                "SYSTEM64 : YUNA IS THE SWEETEST <3",
+                "SYSTEM64 : DRINK WATER-",
+                "SYSTEM64 : NUH UH.."
             ];
             let phraseIndex = 0;
             let charIndex = 0;
@@ -323,14 +323,14 @@
         <header class="header">
             <div class="heading gradient-target" id="typing-heading"></div>
             <div>
-                <span style="color: var(--error-color)">[ACCESS WARNING]:</span> Excessive processing demands *might* cause host system instability. We accept zero liability.
-                <p class="help" style="margin-top: 5px;">DESIGNATED OPERATOR: <strong>YUNA</strong>. Customize the terminal to your (probably excellent) taste.</p>
+                <span style="color: var(--error-color)">[ACCESS WARNING]:</span>We accept zero liability.
+                <p class="help" style="margin-top: 5px;">Made for: <strong>YUNA</strong>. Customize theme :) [better taste prolly]</p>
             </div>
         </header>
         
         <div class="theme-select">
             <details>
-                <summary>YUNA'S THEME MATRIX OVERRIDE</summary>
+                <summary>SELECT theme</summary>
                 <select id="theme-selector">
                     <option value="retro-matrix">Retro Matrix (Green/Cyan)</option>
                     <option value="firewall-breach">Firewall Breach (Red/Amber)</option>
@@ -343,7 +343,7 @@
         </div>
 
         <section class="upload content">
-            <div class="content-heading gradient-target">>> INPUT SOURCE ACQUISITION</div>
+            <div class="content-heading gradient-target">>> INPUT FILE HERE</div>
             <div class="upload-preview">
                 <label class="drop-area preview-image-container" id="dropArea" for="uploadFile">
                     <div class="drop-area-input">
@@ -368,7 +368,7 @@
                                     class="jam jam-upload"></i></button>
                         </div>
                         <p id="uploadError" class="error-message"></p>
-                        <p class="help"><strong>WARNING</strong>: Servers hate you. Local upload is safer.</p>
+                        <p class="help"><strong>WARNING</strong>: other servers hate you. Local upload is safer.</p>
                     </div>
                 </details>
             </div>
@@ -395,7 +395,7 @@
             <details>
                 <summary class="gradient-target">ADJUSTMENT CONTROLS</summary>
                 <div class="preview-controls">
-                    <div class="content-heading gradient-target">>> HAND SUBROUTINE</div>
+                    <div class="content-heading gradient-target">>> HAND ADJUSTER</div>
                     <div class="row control-group">
                         <label for="handScale" class="control-label control-group-s">SCALE</label>
                         <input id="handScale" class="control-range control-group-l" type="range" step="1" min="50" max="300"
@@ -407,7 +407,7 @@
                             value="0">
                     </div>
                     
-                    <div class="content-heading gradient-target">>> IMAGE ADJUSTMENT</div>
+                    <div class="content-heading gradient-target">>> IMAGE ADJUSTER</div>
                     <div class="row">
                         <div class="control-group">
                             <label for="toggleAdjust" class="control-label control-group-l">OVERRIDE</label>
@@ -416,7 +416,7 @@
                                 <span class="toggle-switch-control"></span>
                             </label>
                         </div>
-                        <div class="hint">Enable drag/arrow control. It's not hard.</div>
+                        <div class="hint">Enable drag/arrow control. It's not hard, just skill issues.</div>
                     </div>
                     <div class="row control-group">
                         <label for="toggleFlip" class="control-label control-group-s">FLIP</label>
@@ -436,7 +436,7 @@
                     </div>
                 </div>
             </details>
-            <div class="content-heading gradient-target">>> FRAME SYNCHRONIZATION</div>
+            <div class="content-heading gradient-target">>> FRAME SYNC</div>
             <div class="row control-group">
                 <label for="fps" class="control-label control-group-s">RATE (Hz)</label>
                 <input id="fps" class="control-range" type="range" step="2" min="2" max="60" value="16">
@@ -447,13 +447,13 @@
                 <div class="control-group">
                     <button id="reset" class="btn btn-reset control-group-s">RESET CONFIG</button>
                     <div class="spacer" style="width:0.382em"></div>
-                    <button id="export" class="btn btn-export control-group-l">EXECUTE GIF SYNTHESIS</button>
+                    <button id="export" class="btn btn-export control-group-l">EXECUTE .GIF GENERATION</button>
                 </div>
             </div>
         </section>
 
         <section class="output content" id="outputSection">
-            <div class="content-heading gradient-target">>> FINAL DATA CONSOLIDATION</div>
+            <div class="content-heading gradient-target">>> FINAL .GIF OUTPUT</div>
             <figure class="preview-image-container">
                 <img width="112" height="112" class="preview-image" id="result">
                 <div class="help output-info" id="info">Waiting for data stream...</div>
@@ -463,19 +463,19 @@
             </figure>
             
             <details>
-                <summary class="gradient-target">DATA INTEGRITY REPORT</summary>
+                <summary class="gradient-target">>.GIF dwnld</summary>
                 <div class="content-body">
                     <p class="help">
-                        <strong>WARNING</strong>: Data is temporary. Download it, or lose it.
+                        <strong>WARNING</strong>: generated gif is temporary. Download it, or lose it.
                     </p>
-                    <p class="help">If green appears: It's your browser. We are perfect.</p>
+                    <p class="help">If it glitches: It's your browser. Code's perfect.</p>
                 </div>
             </details>
             </section>
 
         <footer class="footer help">
             <div>
-                <a href="v1">LEGACY V1 (Don't.)</a>
+                <a href="#">LEGACY V1 (Don't.)</a>
                 <span class="separator">|</span>
                 RESOURCES: <a href="img/template.gif" target="_blank">GIF</a>, <a href="img/sprite.png"
                     target="_blank">SPRITE</a>
@@ -483,8 +483,8 @@
                 FRAMEWORK: <strong>gif.js</strong> (Because we could.)
             </div>
             <br>
-            <a class="e fingies" id="fg" data-href="https://neocities.org/site/benisland" title="😳" target="_blank">
-                <span class="fl">👉</span><span>👈</span> (Code Interrogation - Find a bug? Doubtful.)
+            <a class="e fingies" id="fg" data-href="https://github.com/melovescat/pet" title="😳" target="_blank">
+                <span class="fl">👉</span><span>👈</span>
             </a>
             <br>
         </footer>
